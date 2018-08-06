@@ -1,0 +1,208 @@
+var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings) {
+
+    THREE.Group.apply(this, arguments);
+
+    this.center_pos = center_pos;
+    this.r = r;
+    this.majorColor = majorColor;
+    this.customSettings = setdefault(customSettings, {})
+
+    this.settings = {
+        'dim': {
+            'nodeRadius': this.r / 25,
+            'edgeColor': ColorMap['grey'][7],
+            'edgeWidth': 1,
+        },
+        'shine': {
+            'nodeColor': majorColor,
+            'edgeColor': ColorMap[majorColor][0],
+            'edgeWidth': 10,
+        }
+    }
+
+    this.noteMap = {
+        'd': 0,
+        'r': 2,
+        'm': 4,
+        'f': 5,
+        's': 7,
+        'l': 9,
+        't': 11,
+    };
+    for (var i = 0; i < 12; i++) { this.noteMap[i] = i; }
+
+    // create vertices
+    this.vertices = calPolygonVertices(
+        12, r, startAngle, false
+    );
+    for (var i = 0; i < this.vertices.length; i++) {
+        this.vertices[i] = [
+            center_pos[0] + this.vertices[i][0],
+            center_pos[1] + this.vertices[i][1],
+            center_pos[2]
+        ];
+    }
+
+    // create music edges
+    this.edges = [];
+    for (var i = 0; i < this.vertices.length; i++) {
+        for (var j = 0; j < this.vertices.length; j++) {
+            var edge = this.createEdge(
+                pos2v(this.vertices[i]),
+                pos2v(this.vertices[j]),
+                this.settings['dim']['edgeColor'],
+                this.settings['dim']['edgeWidth'],
+            )
+            this.add(edge);
+            this.edges.push(edge);
+        }
+    }
+
+    // create music nodes
+    this.nodes = [];
+    var colors = [];
+    for (var i = 0; i < this.vertices.length; i++) {
+        if ("nodeColors" in this.customSettings) {
+            colors.push(this.customSettings["nodeColors"][i]);
+        }
+        else {
+            colors.push(ColorMap[majorColor][Math.round(i/2) % ColorMap[majorColor].length]);
+        }
+    }
+    this.settings['dim']['nodeColor'] = colors;
+    for (var i = 0; i < this.vertices.length; i++) {
+        var node = this.createNode(
+            this.vertices[i],
+            colors[i],
+            this.settings['dim']['nodeRadius']
+        )
+        this.add(node);
+        this.nodes.push(node);
+    };
+
+}
+MusicClock.prototype = Object.create(THREE.Group.prototype);
+MusicClock.prototype.constructor = MusicClock;
+
+
+MusicClock.prototype.createEdge = function(st_v, et_v, color, lineWidth) {
+    var geometry = new THREE.Geometry();
+    geometry.vertices = [st_v, et_v];
+
+    var material = new THREE.LineBasicMaterial(
+        {
+            color: new THREE.Color(color),
+            linewidth: lineWidth,
+        }
+    );
+    var edge = new THREE.Line(geometry, material);
+    return edge;
+}
+
+
+MusicClock.prototype.createNode = function(pos, color, r) {
+    var geometry = new THREE.CircleGeometry(r, 1000);
+    var material = new THREE.MeshBasicMaterial(
+        {color: new THREE.Color(color)}
+    );
+    var circle = new THREE.Mesh(geometry, material);
+    circle.position.set(pos[0], pos[1], pos[2]);
+
+    return circle;
+}
+
+MusicClock.prototype.pulse = function(chords, timeLapse, repeat, betweenDelay) {
+
+    for (var i = 0; i < chords.length; i++) {
+        var chord = chords[i];
+
+        for (var j = 0; j < chord.length; j++) {
+            var node_ind = this.noteMap[chord[j]];
+            // node movement
+            var t_n = new TimelineLite();
+            for (var r = 0; r < repeat; r++) {
+                var delay = (r == 0? .1: betweenDelay);
+                this._pulseNode(node_ind, timeLapse, t_n, delay);
+            }
+            // edge movement
+            if (j == 0) { continue; }
+            var edge_ind = node_ind * 12 + this.noteMap[chord[j-1]];
+            var t_e = new TimelineLite();
+            for (var r = 0; r < repeat; r++) {
+                var delay = (r == 0? .1: betweenDelay);
+                this._pulseEdge(edge_ind, timeLapse, t_e, delay);
+            }
+        }
+    }
+}
+
+MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay){
+    t = setdefault(t, new TimelineLite());
+    beforeDelay = setdefault(beforeDelay, 0);
+
+    var shineColor = ColorMap[this.settings['shine']['nodeColor']][
+                                node_ind % ColorMap[this.settings['shine']['nodeColor']].length];
+
+    var dimColor = this.settings['dim']['nodeColor'][node_ind];
+
+    TweenLite.killTweensOf(this.nodes[node_ind].material);
+
+    var that = this;
+    function keepShineColor() {
+        that.nodes[node_ind].material.color = new THREE.Color(shineColor);
+    }
+    function keepDimColor() {
+        that.nodes[node_ind].material.color = new THREE.Color(dimColor);
+    }
+
+    t.set(this.nodes[node_ind].material,
+          {color: new THREE.Color(shineColor)})
+     .to(this.nodes[node_ind].scale, timeLapse,
+        {
+            delay: beforeDelay, x: 2, y: 2, z: 2,
+            onUpdate: keepShineColor,
+        })
+     // .set(this.nodes[node_ind].material,
+     //      {color: new THREE.Color(shineColor)})
+     .to(this.nodes[node_ind].scale, timeLapse,
+        {
+            x: 1, y: 1, z: 1,
+            onUpdate: keepShineColor,
+        })
+     .set(this.nodes[node_ind].material,
+          {color: new THREE.Color(dimColor)});
+    return t;
+}
+
+MusicClock.prototype._pulseEdge = function(edge_ind, timeLapse, t, beforeDelay){
+    t = setdefault(t, new TimelineLite());
+    beforeDelay = setdefault(beforeDelay, 0);
+
+    var thickness = this.settings['dim']['edgeWidth'];
+    var that = this;
+
+    function drawEdge() {
+        that.edges[edge_ind].material.needsUpdate = true;
+    }
+
+    t.set(this.edges[edge_ind].material,
+          {color: new THREE.Color(this.settings['shine']['edgeColor'])
+          }
+         )
+    .to(this.edges[edge_ind].material, timeLapse,
+         {delay: beforeDelay,
+          linewidth: this.settings['shine']['edgeWidth'],
+          onUpdate: drawEdge,
+         }
+        )
+     .to(this.edges[edge_ind].material, timeLapse,
+         {linewidth: this.settings['dim']['edgeWidth'],
+          onUpdate: drawEdge,
+         }
+        )
+     .set(this.edges[edge_ind].material,
+          {color: new THREE.Color(this.settings['dim']['edgeColor']),
+          }
+         )
+    return t;
+}
