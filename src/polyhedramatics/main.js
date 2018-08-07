@@ -194,4 +194,5 @@ function initScene() {
     hemisphereLight.position.set(0, 0, 0)
     SCENE.add(hemisphereLight);
 
+    // SCENE.fog = new THREE.Fog(new THREE.Color("black"), 2000, 4000);
 }

@@ -269,6 +269,8 @@ var Scheduler3 = function(startTime) {
     }
 
     this.melodyAgain = function() {
+        // 53 sec
+
         var prevMelodyNotes = SCENE.getObjectByName('melodyNotes');
         if (prevMelodyNotes) {
             SCENE.remove(prevMelodyNotes);

@@ -112,11 +112,14 @@ ShapeFactory.prototype.addLineShape = function(lineType, lineWidth, segNum, dotS
                var spacedPoints = this.shape.getSpacedPoints( segNum );
                var geometrySpacedPoints = new THREE.BufferGeometry().setFromPoints( spacedPoints );
 
+               var sprite = new THREE.TextureLoader().load('../texture/sprites/circle.png');
                var particles = new THREE.Points(
                     geometrySpacedPoints,
                     new THREE.PointsMaterial({
                          color: this.color,
                          size: dotSize,
+                         // map: sprite,
+                         // transparent: true
                     })
                );
                particles.position.set(this.x, this.y, this.z);
