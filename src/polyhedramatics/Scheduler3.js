@@ -19,7 +19,9 @@ var Scheduler3 = function(startTime) {
         'melodyAgain3',
         'killSoFar',
         'slowMelody',
+        'linearMoveCamera',
         'finishNotes',
+        'rotateCamera',
     ];
 
     this.startSecond = [
@@ -35,7 +37,9 @@ var Scheduler3 = function(startTime) {
         this.MID + 7.3,
         this.MID + 10.49,
         this.MID + 10.5,
-        this.MID + 16.9,
+        this.MID + 10.5, // 60 sec
+        this.MID + 16.9, // 67 sec
+        this.MID + 18.9, // 69 sec
     ]
 
     this.MNF = new MelodyNotesFactory();
@@ -501,15 +505,27 @@ var Scheduler3 = function(startTime) {
             )
         }
 
-        TweenLite.to(
+    }
+
+    this.linearMoveCamera = function(){
+        var t = new TimelineLite({paused: true});
+        t.to(
             CAMERA.position, 15,
             {
                 delay: .8,
                 x: 4000,
                 ease: Linear.easeNone,
+                onUpdate: function(){}
             }
-        );
+        ).to(
+            CAMERA.position, 13, //start at 76 sec
+            {
+                ease: Linear.easeNone,
+                x: 4200,
+            }
+        )
 
+        t.play();
     }
 
     this.finishNotes = function() {
@@ -582,16 +598,34 @@ var Scheduler3 = function(startTime) {
 
             )
         }
-        TweenLite.to(
-            CAMERA.rotation, 30,
+    }
+
+    this.rotateCamera = function(){
+
+        var t = new TimelineLite({paused: true});
+
+        t.to(
+            CAMERA.rotation, 6,
             {
-                delay:.2*10,
+                delay:.0, // start at 69 sec
                 onUpdate: function(){
                     CAMERA.rotation.y+=0.001;
                     CAMERA.position.x+=0.001;
                 }
             }
+        ).to(
+            CAMERA.rotation, 20, //start at 75 sec
+            {
+                y: (Math.PI)/2,
+                onUpdate: function(){
+                    // CAMERA.rotation.y += 0.001;
+                    CAMERA.position.x += 0.001;
+                }
+            }
+
         )
+
+        t.play();
     }
 
 }

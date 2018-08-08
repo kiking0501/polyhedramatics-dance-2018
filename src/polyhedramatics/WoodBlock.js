@@ -22,8 +22,9 @@ WoodBlock.prototype.createCube = function(w, h, d, tri, majorColor) {
         w, h, d, tri, tri, tri
     );
     var material = new THREE.MeshBasicMaterial({
-        color: ColorMap[majorColor][2],
+        color:new THREE.Color(setdefault(ColorMap[majorColor], [0, 0, majorColor])[2]),
         wireframe: true,
+        wireframeLinewidth: 1,
     });
     var cube = new THREE.Mesh(
         geometry, material

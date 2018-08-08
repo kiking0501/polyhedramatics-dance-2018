@@ -8,7 +8,7 @@ var Scheduler2 = function(startTime) {
     this.END = 44;
 
     this.program = [
-        'initCameraPosition',
+        'cleanAndInitCameraPosition',
         'initWoodBlock',
         'beatWoodBlock',
         'initBigWoodBlock',
@@ -29,9 +29,13 @@ var Scheduler2 = function(startTime) {
         this.MID,
     ];
 
-    this.initCameraPosition = function() {
+    this.cleanAndInitCameraPosition = function() {
         CAMERA.position.set(-500, 0, 1000);
         CAMERA.lookAt(pos2v(0, 0, 0));
+
+        var soundWave = SCENE.getObjectByName('soundWave');
+        SCENE.remove(soundWave);
+        disposeHierarchy(soundWave);
     }
 
     this._beatWoodBlock = function(woodBlock, beats, br, s) {
@@ -98,9 +102,10 @@ var Scheduler2 = function(startTime) {
     }
 
     this.initBigWoodBlock = function(start) {
+        // run at 15 sec
         start = setdefault(start, this.START+7.5);
 
-        var bigWoodBlock = new WoodBlock([0, 0, 0], 1000, 2, 'lightblue');
+        var bigWoodBlock = new WoodBlock([0, 0, 0], 1000, 3, 'mediumslateblue');
         bigWoodBlock.name = 'bigWoodBlock';
         SCENE.add(bigWoodBlock);
 
@@ -139,7 +144,7 @@ var Scheduler2 = function(startTime) {
     this.initHugeWoodBlock = function(start) {
         start = setdefault(start, this.START+12.3);
 
-        var hugeWoodBlock = new WoodBlock([0, 0, 0], 1100, 4, 'marine');
+        var hugeWoodBlock = new WoodBlock([0, 0, 0], 1100, 3, 'marine');
         hugeWoodBlock.name = 'hugeWoodBlock';
         SCENE.add(hugeWoodBlock);
 

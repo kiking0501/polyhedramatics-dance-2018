@@ -72,6 +72,33 @@ SoundWave.prototype.resetTime = function(){
     this.t = 0;
 }
 
+SoundWave.prototype.changeParticleSize = function(totalTime, minSize, maxSize){
+    var that = this;
+
+    function changeSize(){
+
+        var material = that.particles.material;
+        material.size = that.size;
+        material.needsUpdate = true;
+
+    }
+    var t = new TimelineLite();
+    t.to(
+        that, totalTime/2.0,
+        {
+            size: maxSize,
+            onUpdate: changeSize,
+        }
+    ).to(
+        that, totalTime/2.0,
+        {
+            size: minSize,
+            onUpdate: changeSize,
+        }
+    )
+
+}
+
 SoundWave.prototype.setRandomMovement = function(totalTime, delaySpeed, magnitude, t_scale, timeLine) {
     var waveType = "random";
     var magnitudeFunc = function(m, i) {
@@ -83,9 +110,24 @@ SoundWave.prototype.setRandomMovement = function(totalTime, delaySpeed, magnitud
     return timeLine;
 }
 
-SoundWave.prototype.setGeometricPulse = function(totalTime, delaySpeed, magnitude, t_scale, timeLine) {
 
-    var waveType = "cylindrical";
+SoundWave.prototype.setPlanePulse = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType) {
+
+    waveType = setdefault(waveType, "plane");
+    var magnitudeFunc = function(m, i) {
+        return m;
+        return m/(i+1);
+    };
+
+    var timeLine = this.setPulse(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc);
+
+    return timeLine;
+
+}
+
+SoundWave.prototype.setGeometricPulse = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType) {
+
+    waveType = setdefault(waveType, "cylindrical");
     var magnitudeFunc = function(m, i) {
         return m/(i+1);
     };
@@ -143,7 +185,7 @@ SoundWave.prototype.displacement = function(waveType, magnitude, x, y, z, t) {
 
     switch (waveType) {
         case "plane":
-            offset.set( Math.sin(x - t), 0, 0);
+            offset.set( magnitude * Math.sin(x - t), 0, 0);
             return offset;
 
         case "cylindrical":

@@ -6,11 +6,11 @@ var Scheduler1 = function(startTime) {
     this.START = setdefault(startTime, 0.0);
 
     this.program = [
-        'initMusicClock',
         'initSoundWave',
+        'initMusicClock',
         'musicClockPulse',
         'soundWavePulse',
-        'rotateMusicClock',
+        'moveCamera',
         'removeMusicClock',
     ];
     this.startSecond = [
@@ -21,6 +21,20 @@ var Scheduler1 = function(startTime) {
         this.START + 3.8,
         this.START + 8.0
     ]
+    this.initSoundWave = function() {
+
+        var center_pos = [0,0,-1000],
+            xNum = 200,
+            yNum = 100,
+            zNum = 5,
+            majorColor = 'dodgerblue',
+            size = 20,
+            dist = 500;
+
+        var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
+        soundWave.name = 'soundWave';
+        SCENE.add(soundWave);
+    }
 
     this.initMusicClock = function() {
 
@@ -38,20 +52,6 @@ var Scheduler1 = function(startTime) {
 
     };
 
-    this.initSoundWave = function() {
-        var center_pos = [0,0,-1000],
-            xNum = 200,
-            yNum = 100,
-            zNum = 5,
-            majorColor = 'dodgerblue',
-            size = 20,
-            dist = 300;
-
-        var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
-        soundWave.name = 'soundWave';
-        SCENE.add(soundWave);
-
-    }
     this.musicClockPulse = function () {
 
         var chords = [['d', 'm', 's', 'd'],
@@ -91,15 +91,21 @@ var Scheduler1 = function(startTime) {
 
 
     }
+    this.soundWavePulse = function(){
+        var names = ['soundWave',
+                    ];
+        for (var i = 0; i < names.length; i++) {
+            var soundWave = SCENE.getObjectByName('soundWave');
+            this._soundWavePulse(soundWave);
+        }
 
-    this.soundWavePulse = function() {
+    }
+
+    this._soundWavePulse = function(soundWave, magnitude) {
         var totalTime,
             delaySpeed,
             magnitude,
             t_scale = 1;
-
-
-        var soundWave = SCENE.getObjectByName('soundWave');
 
         totalTime = 3;
         delaySpeed = 0.01;
@@ -113,12 +119,11 @@ var Scheduler1 = function(startTime) {
         var pulseT = new TimelineLite({pause:true});
         pulseT = pulseT.call(
             function(){
-                console.log('hey');
                 randomT.kill();
                 soundWave.resetTime()
             }, [], this, "2.7");
 
-        totalTime = 5;
+        totalTime = 6;
         delaySpeed = 0.05;
         magnitude = 100000;
         t_scale = 1;
@@ -131,13 +136,37 @@ var Scheduler1 = function(startTime) {
 
     }
 
-    this.rotateMusicClock = function() {
+    this.moveCamera = function() {
+
+        var t = new TimelineLite();
+
+        var soundWave = SCENE.getObjectByName('soundWave');
+        var ori_offset = [
+            soundWave.center_pos[0] - CAMERA.position.x,
+            soundWave.center_pos[1] - CAMERA.position.y,
+            soundWave.center_pos[2] - CAMERA.position.z
+        ];
+
+        var ori_position = [CAMERA.position.x, CAMERA.position.y, CAMERA.position.z];
 
         function cameraLookAt() {
             CAMERA.lookAt(pos2v([0, 0, 0]));
+            var offset = [
+                ori_position[0] - CAMERA.position.x,
+                ori_position[1] - CAMERA.position.y,
+                ori_position[2] - CAMERA.position.z
+            ]
+
+            ori_position = [
+                CAMERA.position.x,
+                CAMERA.position.y,
+                CAMERA.position.z
+            ]
+            soundWave.position.x += offset[0];
+            soundWave.position.y += offset[1];
+            soundWave.position.z += offset[2];
         }
 
-        var t = new TimelineLite();
 
         t.to(CAMERA.position, 3.5,
              {
@@ -145,23 +174,21 @@ var Scheduler1 = function(startTime) {
                 z: -800,
                 onUpdate: cameraLookAt,
              }
+        ).to(CAMERA.position, 4,
+             {
+                x: -500,
+                y: 0,
+                z: 1000,
+                onUpdate: function(){CAMERA.lookAt(pos2v([0, 0, 0]));}
+             }
             )
-        // .to(CAMERA.rotation, 1.0,
-        //     {
-        //         y: Math.PI,
-        //         // ease: Power0.easeNone
-        //     }
-        // ).to(CAMERA.position, 4,
-        //     { x: 0,
-        //       z: -1000,
-        //       onUpdate: cameraLookAt,
-        //     }
-        // )
-
     }
 
     this.removeMusicClock = function() {
-        restoreScene();
+        var musicClock = SCENE.getObjectByName('musicClock');
+        SCENE.remove(musicClock);
+        disposeHierarchy(musicClock);
+
     }
 
 }

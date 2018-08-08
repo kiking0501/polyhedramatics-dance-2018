@@ -19,6 +19,7 @@ var SCHEDULE_LIST = [
     new Scheduler1(),
     new Scheduler2(),
     new Scheduler3(),
+    new Scheduler4(),
 ]
 
 function changeInputStart(ele){
@@ -194,5 +195,5 @@ function initScene() {
     hemisphereLight.position.set(0, 0, 0)
     SCENE.add(hemisphereLight);
 
-    // SCENE.fog = new THREE.Fog(new THREE.Color("black"), 2000, 4000);
+    // SCENE.fog = new THREE.Fog(new THREE.Color("black"), 0.1, 0.2);
 }
