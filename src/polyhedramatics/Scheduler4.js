@@ -79,16 +79,16 @@ var Scheduler4 = function(startTime) {
 
     this.startFlyingNotes = function() {
         // start at 87 sec
-        var center_pos = [0, 0, 0],
+        var center_pos = [0, 0, 1000],
             majorColor = 'lightblue',
             length = 100,
-            scale = 500;
+            size = 20;
 
         var flyingNote = new FlyingNote(
             center_pos,
             majorColor,
             length,
-            scale
+            size
         );
 
         flyingNote.name = "flyingNote";

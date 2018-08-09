@@ -34,21 +34,6 @@ var Scheduler1 = function(startTime) {
         );
         musicClock.name = 'musicClock';
         SCENE.add(musicClock);
-
-        // var center_pos = [0, 0, 0],
-        //     majorColor = 'lightblue',
-        //     length = 100,
-        //     scale = 5;
-
-        // var flyingNote = new FlyingNote(
-        //     center_pos,
-        //     majorColor,
-        //     length,
-        //     scale
-        // );
-
-        // flyingNote.name = "flyingNote";
-        // SCENE.add(flyingNote);
     };
 
     this.musicClockPulse = function () {
