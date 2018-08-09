@@ -614,13 +614,14 @@ var Scheduler3 = function(startTime) {
                 }
             }
         ).to(
-            CAMERA.rotation, 20, //start at 75 sec
+            CAMERA.rotation, 40, //start at 75 sec
             {
                 y: (Math.PI)/2,
                 onUpdate: function(){
                     // CAMERA.rotation.y += 0.001;
                     CAMERA.position.x += 0.001;
-                }
+                },
+                ease: Power2.easeOut,
             }
 
         )

@@ -34,6 +34,7 @@ var Scheduler1 = function(startTime) {
         var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
         soundWave.name = 'soundWave';
         SCENE.add(soundWave);
+
     }
 
     this.initMusicClock = function() {

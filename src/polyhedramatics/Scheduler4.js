@@ -2,19 +2,22 @@ var Scheduler4 = function(startTime) {
     var that = this;
 
     this.START = setdefault(startTime, 70);
+    this.MID = this.START + 17; // 87sec
 
     this.program = [
         'addBackGroundWave',
-        'backGroundWavePulse'
+        'backGroundWavePulse',
+        'startFlyingNotes',
     ];
 
     this.startSecond = [
         this.START,
         this.START + 6.0,
+        this.MID,
     ]
 
     this.addBackGroundWave = function(){
-        // run at 73sec
+        // run at 70sec
         // SCENE.fog.near = 3000;
         // SCENE.fog.far = 4000;
 
@@ -74,5 +77,12 @@ var Scheduler4 = function(startTime) {
             backGroundWave.changeParticleSize, [5, 20, 35], backGroundWave, "+=10"
         )
         t.play();
+    }
+
+    this.startFlyingNotes = function() {
+        // start at 87
+        var flyingNote = new FlyingNote([0, 0, 0], 'lightblue', 50);
+        SCENE.add(flyingNote);
+
     }
 }
