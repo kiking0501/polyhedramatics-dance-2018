@@ -10,6 +10,7 @@ var Scheduler3 = function(startTime) {
         'initCameraPosition',
         'drawMelody',
         'cleanWoodBlocks',
+        'showSoundWave',
         'initMusicClock',
         'pulseMusicClock',
         'initScaleClock',
@@ -28,10 +29,11 @@ var Scheduler3 = function(startTime) {
         this.START,
         this.START + 1.2,
         this.START + 9,
-        this.START + 9,
-        this.START + 9,
+        this.START + 9, //initMusicClock
+        this.START + 9, // showSoundWave
+        this.START + 9, // pulseMusicClock
         this.MID - 1,
-        this.MID,
+        this.MID, // pulseScaleClock
         this.MID + 4.3,  //melodyAgain
         this.MID + 6.3,
         this.MID + 7.3,
@@ -130,6 +132,42 @@ var Scheduler3 = function(startTime) {
             SCENE.remove(woodBlock);
             disposeHierarchy(woodBlock);
         }
+    }
+
+    this.showSoundWave = function(){
+        // play at 45 sec
+        var center_pos = [0,0,-1000],
+            xNum = 100,
+            yNum = 100,
+            zNum = 5,
+            majorColor = 'black',
+            size = 10,
+            // dist = 500;
+            dist = 500;
+
+        var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
+        soundWave.name = 'highPitchSoundWave';
+        SCENE.add(soundWave);
+
+        var totalTime = 8;
+        delaySpeed = 0.02;
+        magnitude = 1000;
+        t_scale = 1;
+
+        var pulseT = soundWave.setLinearMovement(
+            totalTime, delaySpeed, magnitude, t_scale, new TimelineLite({paused:true}), "cylindrical"
+        );
+        var shineColor = "hotpink",
+            dimColor = "black";
+
+        pulseT.call(
+            soundWave.pulseParticle, [3, 20, 20, shineColor, false], soundWave, "0"
+        ).call(
+            soundWave.pulseParticle, [4.5, 20, 20, dimColor, false], soundWave, "3.8"
+        ).call(
+            function(){SCENE.remove(soundWave); disposeHierarchy(soundWave);}
+        )
+        pulseT.play();
     }
     this.initMusicClock = function(){
 
@@ -625,7 +663,7 @@ var Scheduler3 = function(startTime) {
                 ease: Power2.easeOut,
             }
 
-        )
+        ).call(function(){console.log(CAMERA.position)});
 
         t.play();
     }

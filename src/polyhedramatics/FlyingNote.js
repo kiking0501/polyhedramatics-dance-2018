@@ -4,7 +4,8 @@ var FlyingNote = function(center_pos, majorColor, length, scale) {
 
     var that = this;
 
-    this.color = setdefault(ColorMap[majorColor], [0, majorColor])[2]
+    this.color = setdefault(ColorMap[majorColor], ["white", 0, majorColor])[0]
+    this.color3 = new THREE.Color(this.color);
     this.scale = scale;
     this.center_pos = center_pos;
     this.length = length;
@@ -13,10 +14,10 @@ var FlyingNote = function(center_pos, majorColor, length, scale) {
     this.note = note;
     this.add(note);
 
-    var trail = this.initTrail();
-    this.trail = trail;
-    this.trail_initialized = true;
-    this.add(trail);
+    // var trail = this.initTrail();
+    // this.trail = trail;
+    // this.trail_initialized = true;
+    // this.add(trail);
 
 }
 
@@ -74,7 +75,7 @@ FlyingNote.prototype.initNote = function(){
 
     var geometry = new BirdGeometry(this.scale);
     var material = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(this.color),
+        color: this.color3,
         side: THREE.DoubleSide,
     })
 
@@ -82,10 +83,10 @@ FlyingNote.prototype.initNote = function(){
         geometry,
         material
     );
-
+console.log(note);
     note.position.set(this.center_pos[0], this.center_pos[1], this.center_pos[2]);
     note.rotation.set(Math.PI/5, Math.PI/5, 0)
-
+    SCENE.add(note);
     return note;
 }
 

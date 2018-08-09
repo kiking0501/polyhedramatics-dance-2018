@@ -11,7 +11,7 @@ var SoundWave = function(center_pos, xNum, yNum, zNum, majorColor, size, dist, i
     this.xNum = xNum;
     this.yNum = yNum;
     this.zNum = zNum;
-    this.majorColor = majorColor;
+    this.color3 = new THREE.Color(setdefault(ColorMap[majorColor], [majorColor])[0]);
     this.size = size;
     this.dist = dist;
 
@@ -52,7 +52,7 @@ var SoundWave = function(center_pos, xNum, yNum, zNum, majorColor, size, dist, i
     var sprite = new THREE.TextureLoader().load('../texture/sprites/disc.png');
 
     var material = new THREE.PointsMaterial({
-        color: new THREE.Color(setdefault(ColorMap[majorColor], [majorColor])[0]),
+        color: this.color3,
         size: size,
         map: sprite,
         transparent: true,
@@ -72,8 +72,61 @@ SoundWave.prototype.resetTime = function(){
     this.t = 0;
 }
 
-SoundWave.prototype.changeParticleSize = function(totalTime, minSize, maxSize){
+SoundWave.prototype.pulseParticle = function(totalTime, minSize, maxSize, finalColor, cycle) {
+    this.changeParticleColor(
+        totalTime, finalColor, cycle
+    );
+
+    this.changeParticleSize(
+        totalTime, minSize, maxSize, cycle
+    );
+}
+
+SoundWave.prototype.changeParticleColor = function(totalTime, finalColor, cycle){
     var that = this;
+    cycle = setdefault(cycle, true);
+
+    function changeColor(){
+        var material = that.particles.material;
+        material.color.r = that.color3.r;
+        material.color.g = that.color3.g;
+        material.color.b = that.color3.b;
+        material.needsUpdate = true;
+    }
+
+    var oriColor3 = this.color3.clone();
+    var finalColor3 = new THREE.Color(finalColor);
+
+    var t = new TimelineLite({paused: true});
+    var duration = cycle?totalTime/2.0:totalTime;
+
+    t = t.to(
+        that.color3, duration,
+        {
+            r: finalColor3.r,
+            g: finalColor3.g,
+            b: finalColor3.b,
+            onUpdate: changeColor,
+        }
+    )
+
+    if (cycle){
+        t = t.to(
+            that.color3, duration,
+            {
+                r: oriColor3.r,
+                g: oriColor3.g,
+                b: oriColor3.b,
+                onUpdate: changeColor,
+            }
+        )
+    }
+    t.play();
+}
+
+SoundWave.prototype.changeParticleSize = function(totalTime, minSize, maxSize, cycle){
+    var that = this;
+    cycle = setdefault(cycle, true);
 
     function changeSize(){
 
@@ -82,21 +135,28 @@ SoundWave.prototype.changeParticleSize = function(totalTime, minSize, maxSize){
         material.needsUpdate = true;
 
     }
-    var t = new TimelineLite();
-    t.to(
-        that, totalTime/2.0,
+    var t = new TimelineLite({paused: true});
+
+    var duration = cycle?totalTime/2.0:totalTime;
+
+    t = t.to(
+        that, duration,
         {
             size: maxSize,
             onUpdate: changeSize,
         }
-    ).to(
-        that, totalTime/2.0,
-        {
-            size: minSize,
-            onUpdate: changeSize,
-        }
     )
 
+    if (cycle){
+        t = t.to(
+            that, duration,
+            {
+                size: minSize,
+                onUpdate: changeSize,
+            }
+        )
+    }
+    t.play();
 }
 
 SoundWave.prototype.setRandomMovement = function(totalTime, delaySpeed, magnitude, t_scale, timeLine) {
@@ -105,40 +165,39 @@ SoundWave.prototype.setRandomMovement = function(totalTime, delaySpeed, magnitud
         return m;
     };
 
-    var timeLine = this.setPulse(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc);
+    var timeLine = this.setMovement(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc);
 
     return timeLine;
 }
 
 
-SoundWave.prototype.setPlanePulse = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType) {
+SoundWave.prototype.setLinearMovement = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType) {
 
     waveType = setdefault(waveType, "plane");
     var magnitudeFunc = function(m, i) {
         return m;
-        return m/(i+1);
     };
 
-    var timeLine = this.setPulse(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc);
+    var timeLine = this.setMovement(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc);
 
     return timeLine;
 
 }
 
-SoundWave.prototype.setGeometricPulse = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType) {
+SoundWave.prototype.setGeometricMovement = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType) {
 
     waveType = setdefault(waveType, "cylindrical");
     var magnitudeFunc = function(m, i) {
         return m/(i+1);
     };
 
-    var timeLine = this.setPulse(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc);
+    var timeLine = this.setMovement(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc);
 
     return timeLine;
 
 }
 
-SoundWave.prototype.setPulse = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc) {
+SoundWave.prototype.setMovement = function(totalTime, delaySpeed, magnitude, t_scale, timeLine, waveType, magnitudeFunc) {
     magnitudeFunc = setdefault(
         magnitudeFunc,
         function(m, i) {

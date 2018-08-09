@@ -12,7 +12,7 @@ var Scheduler4 = function(startTime) {
 
     this.startSecond = [
         this.START,
-        this.START + 6.0,
+        this.START + 5.5, //backgroundwave pulse
         this.MID,
     ]
 
@@ -27,7 +27,7 @@ var Scheduler4 = function(startTime) {
             xNum = 50,
             yNum = 50,
             zNum = 30,
-            majorColor = 'lightskyblue',
+            majorColor = 'royalblue',
             size = 20,
             dist = 300,
             isLattice = true;
@@ -52,7 +52,7 @@ var Scheduler4 = function(startTime) {
             t_scale = 1,
             timeLine = new TimelineLite({pause:true});
 
-        var t = backGroundWave.setPlanePulse(
+        var t = backGroundWave.setLinearMovement(
             totalTime, delaySpeed, magnitude, t_scale, timeLine
         );
 
@@ -64,22 +64,25 @@ var Scheduler4 = function(startTime) {
 
         var backGroundWave = SCENE.getObjectByName('backGroundWave');
 
+
+        var shineColor = "blue";
         var t = new TimelineLite({paused: true});
 
-        t.call( //76 sec
-            backGroundWave.changeParticleSize, [5, 20, 35], backGroundWave
-        ).call( // 89 sec
-            backGroundWave.changeParticleSize, [5, 20, 35], backGroundWave, "+=10"
+        t.call(
+            backGroundWave.pulseParticle, [5, 20, 35, shineColor], backGroundWave
+        ).call(
+            backGroundWave.pulseParticle, [5, 20, 35, shineColor], backGroundWave, "+=9.5"
         )
+
         t.play();
     }
 
     this.startFlyingNotes = function() {
         // start at 87 sec
-        var center_pos = [2400, 0, 0],
+        var center_pos = [0, 0, 0],
             majorColor = 'lightblue',
             length = 100,
-            scale = 50;
+            scale = 500;
 
         var flyingNote = new FlyingNote(
             center_pos,

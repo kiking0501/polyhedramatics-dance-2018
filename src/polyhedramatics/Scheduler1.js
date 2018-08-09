@@ -21,21 +21,6 @@ var Scheduler1 = function(startTime) {
         this.START + 3.8,
         this.START + 8.0
     ]
-    this.initSoundWave = function() {
-
-        var center_pos = [0,0,-1000],
-            xNum = 200,
-            yNum = 100,
-            zNum = 5,
-            majorColor = 'dodgerblue',
-            size = 20,
-            dist = 500;
-
-        var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
-        soundWave.name = 'soundWave';
-        SCENE.add(soundWave);
-
-    }
 
     this.initMusicClock = function() {
 
@@ -50,7 +35,20 @@ var Scheduler1 = function(startTime) {
         musicClock.name = 'musicClock';
         SCENE.add(musicClock);
 
+        // var center_pos = [0, 0, 0],
+        //     majorColor = 'lightblue',
+        //     length = 100,
+        //     scale = 5;
 
+        // var flyingNote = new FlyingNote(
+        //     center_pos,
+        //     majorColor,
+        //     length,
+        //     scale
+        // );
+
+        // flyingNote.name = "flyingNote";
+        // SCENE.add(flyingNote);
     };
 
     this.musicClockPulse = function () {
@@ -92,6 +90,23 @@ var Scheduler1 = function(startTime) {
 
 
     }
+
+    this.initSoundWave = function() {
+
+        var center_pos = [0,0,-1000],
+            xNum = 100,
+            yNum = 100,
+            zNum = 5,
+            majorColor = 'dodgerblue',
+            size = 20,
+            dist = 500;
+
+        var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
+        soundWave.name = 'soundWave';
+        SCENE.add(soundWave);
+
+    }
+
     this.soundWavePulse = function(){
         var names = ['soundWave',
                     ];
@@ -108,32 +123,41 @@ var Scheduler1 = function(startTime) {
             magnitude,
             t_scale = 1;
 
-        totalTime = 3;
-        delaySpeed = 0.01;
-        magnitude = 0;
+        // totalTime = 3;
+        // delaySpeed = 0.01;
+        // magnitude = 0;
 
-        var randomT = soundWave.setRandomMovement(
-            totalTime, delaySpeed, magnitude, t_scale
-        )
-        randomT.play();
+        // var randomT = soundWave.setRandomMovement(
+        //     totalTime, delaySpeed, magnitude, t_scale
+        // )
+        // randomT.play();
 
         var pulseT = new TimelineLite({pause:true});
         pulseT = pulseT.call(
             function(){
-                randomT.kill();
+                // randomT.kill();
                 soundWave.resetTime()
             }, [], this, "2.7");
 
         totalTime = 6;
-        delaySpeed = 0.05;
-        magnitude = 100000;
+        delaySpeed = 0.02;
+        magnitude = 1500;
         t_scale = 1;
 
-        pulseT = soundWave.setGeometricPulse(
-            totalTime, delaySpeed, magnitude, t_scale, pulseT
+        pulseT = soundWave.setLinearMovement(
+            totalTime, delaySpeed, magnitude, t_scale, pulseT, "cylindrical"
         );
 
+        var shineColor = "deepskyblue",
+            dimColor = "mediumblue";
+        pulseT.call(
+            soundWave.pulseParticle, [0.5, 20, 21, shineColor, false], soundWave, "2.7"
+        ).call(
+            soundWave.pulseParticle, [3.5, 21, 20, dimColor, false], soundWave, "3.7"
+        )
+
         pulseT.play();
+
 
     }
 
