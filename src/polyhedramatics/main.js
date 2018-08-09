@@ -2,6 +2,7 @@ var SCENE,
     CAMERA,
     RENDERER,
     CONTAINER,
+    CONTROLS,
     TIMELINE = null,
     RESTART = false,
     PAUSE = false;
@@ -118,6 +119,8 @@ function render(timestamp) {
         START = null;
         SOUND.stop();
     }
+
+    // CONTROLS.update(); // FIXME: affect camera rotation
 }
 
 function pause() {
@@ -171,6 +174,15 @@ function init() {
     CONTAINER.html("");
     CONTAINER.append( RENDERER.domElement );
 
+    window.addEventListener( 'resize', onWindowResize, false );
+
+
+    CONTROLS = new THREE.OrbitControls( CAMERA,  RENDERER.domElement  );
+    // // CONTROLS.enableDamping = true;
+    // // CONTROLS.dampingFactor = 0.25;
+    CONTROLS.enableZoom = true;
+
+
 }
 
 function initScene() {
@@ -196,4 +208,15 @@ function initScene() {
     SCENE.add(hemisphereLight);
 
     // SCENE.fog = new THREE.Fog(new THREE.Color("black"), 0.1, 0.2);
+}
+
+function onWindowResize() {
+
+    WIDTH = window.innerWidth;
+    HEIGHT = window.innerHeight;
+
+    CAMERA.aspect = WIDTH / HEIGHT;
+    CAMERA.updateProjectionMatrix()
+    RENDERER.setSize( WIDTH, HEIGHT );
+
 }

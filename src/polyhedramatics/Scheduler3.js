@@ -32,7 +32,7 @@ var Scheduler3 = function(startTime) {
         this.START + 9,
         this.MID - 1,
         this.MID,
-        this.MID + 4.3,
+        this.MID + 4.3,  //melodyAgain
         this.MID + 6.3,
         this.MID + 7.3,
         this.MID + 10.49,
@@ -50,6 +50,7 @@ var Scheduler3 = function(startTime) {
 
         function updateCamera(){
             CAMERA.lookAt(pos2v(0, 0, 0))
+
         }
         TweenLite.to(
             CAMERA.position, 5,

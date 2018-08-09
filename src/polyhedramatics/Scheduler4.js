@@ -58,11 +58,6 @@ var Scheduler4 = function(startTime) {
 
         t.play();
 
-        // TweenLite.delayedCall( // at 79 sec
-        //     6,
-        //     backGroundWave.changeParticleSize, [3, 20, 30], backGroundWave
-        // )
-
     }
 
     this.backGroundWavePulse = function() {
@@ -80,9 +75,22 @@ var Scheduler4 = function(startTime) {
     }
 
     this.startFlyingNotes = function() {
-        // start at 87
-        var flyingNote = new FlyingNote([0, 0, 0], 'lightblue', 50);
+        // start at 87 sec
+        var center_pos = [2400, 0, 0],
+            majorColor = 'lightblue',
+            length = 100,
+            scale = 50;
+
+        var flyingNote = new FlyingNote(
+            center_pos,
+            majorColor,
+            length,
+            scale
+        );
+
+        flyingNote.name = "flyingNote";
         SCENE.add(flyingNote);
+
 
     }
 }

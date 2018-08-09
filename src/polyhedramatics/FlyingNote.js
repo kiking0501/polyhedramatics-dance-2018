@@ -1,25 +1,22 @@
-var FlyingNote = function(center_pos, majorColor, scale) {
+var FlyingNote = function(center_pos, majorColor, length, scale) {
 
     THREE.Group.apply(this, arguments);
 
+    var that = this;
+
     this.color = setdefault(ColorMap[majorColor], [0, majorColor])[2]
+    this.scale = scale;
+    this.center_pos = center_pos;
+    this.length = length;
 
-    var geometry = new BirdGeometry(scale);
-    var material = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(this.color),
-        side: THREE.DoubleSide,
-    })
+    var note = this.initNote();
+    this.note = note;
+    this.add(note);
 
-    var flyingNote = new THREE.Mesh(
-        geometry,
-        material
-    );
-
-    flyingNote.position.set(center_pos[0], center_pos[1], center_pos[2]);
-    flyingNote.rotation.set(Math.PI/5, Math.PI/5, 0)
-    this.note = flyingNote;
-
-    this.add(flyingNote);
+    var trail = this.initTrail();
+    this.trail = trail;
+    this.trail_initialized = true;
+    this.add(trail);
 
 }
 
@@ -27,8 +24,75 @@ FlyingNote.prototype = Object.create(THREE.Group.prototype);
 FlyingNote.prototype.constructor = FlyingNote;
 
 
+FlyingNote.prototype.initTrail = function(){
+
+    // adopted & modified from THREE.MeshLine birds.html / Boid object
+
+    // Create the line geometry used for storing verticies
+    var geometry = new THREE.Geometry();
+    for (var i = 0; i < this.length; i++) {
+        geometry.vertices.push(this.position.clone());
+    }
+
+    // Create the line mesh
+    meshLine = new MeshLine();
+    meshLine.setGeometry(
+        geometry,
+        function(p){ return p; } // set width taper
+    )
+
+    // Create the line material
+    material = new MeshLineMaterial({
+        color: new THREE.Color(this.color),
+        opacity: 1,
+        sizeAttenuation: 1,
+        lineWidth: 1,
+        near: 1,
+        far: 100000,
+        depthTest: false,
+        blending: THREE.AdditiveBlending,
+        transparent: false,
+        side: THREE.DoubleSide
+    })
+
+    trail = new THREE.Mesh(
+        meshLine.geometry,
+        material
+    );
+
+    trail.frustumCulled = false;
+
+    this.meshLine = meshLine;
+    this.trail_material = material;
+
+    return trail;
+
+}
+
+
+FlyingNote.prototype.initNote = function(){
+
+    var geometry = new BirdGeometry(this.scale);
+    var material = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(this.color),
+        side: THREE.DoubleSide,
+    })
+
+    var note = new THREE.Mesh(
+        geometry,
+        material
+    );
+
+    note.position.set(this.center_pos[0], this.center_pos[1], this.center_pos[2]);
+    note.rotation.set(Math.PI/5, Math.PI/5, 0)
+
+    return note;
+}
+
+
 var BirdGeometry = function (scale) {
-// adopted from THREE.MeshLine bird.js
+
+    // adopted & modified from THREE.MeshLine Bird.js
 
     var that = this;
 
