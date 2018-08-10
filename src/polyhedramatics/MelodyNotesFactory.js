@@ -203,13 +203,6 @@ MelodyNotesFactory.prototype.setMelodyNotesPosition = function(melodyNotes, pos)
     return melodyNotes;
 }
 
-var MelodyNote = function(note){
-    THREE.Group.apply(this, arguments);
-
-    this.add(note);
-    this.note = note;
-}
-
 MelodyNotesFactory.prototype.getMelodyPositions = function(notes, startPos, relativeTo) {
     // if relativeTo is supplied
     // height of the notes would be adjusted to be relative to that note(with startPos)
@@ -248,5 +241,153 @@ MelodyNotesFactory.prototype.getMelodyPositions = function(notes, startPos, rela
     return positions;
 }
 
+
+var MelodyNote = function(note){
+    THREE.Group.apply(this, arguments);
+
+    if (note) {
+        this.add(note);
+        this.note = note;
+
+    }
+    this.color3List = [];
+    this.sizeList = [];
+
+}
+
 MelodyNote.prototype = Object.create(THREE.Group.prototype);
 MelodyNote.prototype.constructor = MelodyNote;
+
+MelodyNote.prototype.pulsePoints = function(note, totalTime, minSize, maxSize, finalColor, layerDelay, cycle) {
+    this.changePointSize(note, totalTime, minSize, maxSize, layerDelay, cycle);
+    this.changePointColor(note, totalTime, finalColor, layerDelay, cycle);
+
+}
+
+
+MelodyNote.prototype.changePointSize = function(note, totalTime, minSize, maxSize, layerDelay, cycle){
+    var sizeList = [];
+    for (var i = 0; i < note.children.length; i++){
+        sizeList.push({size: minSize});
+    }
+    this.sizeList = sizeList;
+
+    var t = new TimelineLite({paused: true});
+
+    for (var i = 0; i < note.children.length; i++) {
+        t = t.call(
+            this._changePointSize,
+            [note, i, totalTime, minSize, maxSize, cycle],
+            this,
+            "+=" + layerDelay,
+        )
+    }
+    t.play();
+}
+
+
+MelodyNote.prototype.changePointColor = function(note, totalTime, finalColor, layerDelay, cycle){
+    var color3List = [];
+    for (var i = 0; i < note.children.length; i++){
+        color3List.push({color: note.children[i].material.color.clone()});
+    }
+    this.color3List = color3List;
+
+    var t = new TimelineLite({paused: true});
+
+    for (var i = 0; i < note.children.length; i++) {
+        t = t.call(
+            this._changePointColor,
+            [note, i, totalTime, finalColor, cycle],
+            this,
+            "+=" + layerDelay,
+        )
+    }
+
+    t.play();
+
+}
+
+MelodyNote.prototype._changePointSize = function(note, child_ind, totalTime, minSize, maxSize, cycle){
+    var that = this;
+    cycle = setdefault(cycle, true);
+
+    function changeSize(){
+
+        var material = note.children[child_ind].material;
+        material.size = that.sizeList[child_ind].size;
+        material.needsUpdate = true;
+
+    }
+
+    that.size = minSize;
+
+    var t = new TimelineLite({paused: true});
+
+    var duration = cycle?totalTime/2.0:totalTime;
+
+    t = t.to(
+        that.sizeList[child_ind], duration,
+        {
+            size: maxSize,
+            onUpdate: changeSize,
+        }
+    )
+
+    if (cycle){
+        t = t.to(
+            that.sizeList[child_ind], duration,
+            {
+                size: minSize,
+                onUpdate: changeSize,
+            }
+        )
+    }
+    t.play();
+}
+
+
+
+MelodyNote.prototype._changePointColor = function(note, child_ind, totalTime, finalColor, cycle){
+
+    var that = this;
+    cycle = setdefault(cycle, true);
+
+    function changeColor(){
+        var material = note.children[child_ind].material;
+        material.color.r = that.color3List[child_ind].color.r;
+        material.color.g = that.color3List[child_ind].color.g;
+        material.color.b = that.color3List[child_ind].color.b;
+        material.needsUpdate = true;
+    }
+
+    var oriColor3 = note.children[child_ind].material.color.clone();
+    var finalColor3 = new THREE.Color(finalColor);
+
+    var t = new TimelineLite({paused: true});
+    var duration = cycle?totalTime/2.0:totalTime;
+
+    t = t.to(
+        this.color3List[child_ind].color, duration,
+        {
+            r: finalColor3.r,
+            g: finalColor3.g,
+            b: finalColor3.b,
+            onUpdate: changeColor,
+        }
+    )
+
+    if (cycle){
+        t = t.to(
+            this.color3List[child_ind].color, duration,
+            {
+                r: oriColor3.r,
+                g: oriColor3.g,
+                b: oriColor3.b,
+                onUpdate: changeColor,
+            }
+        )
+    }
+
+    t.play();
+}

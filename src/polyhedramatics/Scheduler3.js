@@ -161,9 +161,9 @@ var Scheduler3 = function(startTime) {
             dimColor = "black";
 
         pulseT.call(
-            soundWave.pulseParticle, [3, 20, 20, shineColor, false], soundWave, "0"
+            soundWave.pulseParticle, [4.5, 20, 20, shineColor, false], soundWave, "0"
         ).call(
-            soundWave.pulseParticle, [4.5, 20, 20, dimColor, false], soundWave, "3.8"
+            soundWave.pulseParticle, [5.5, 20, 20, dimColor, false], soundWave, "6.5"
         ).call(
             function(){SCENE.remove(soundWave); disposeHierarchy(soundWave);}
         )
@@ -528,7 +528,7 @@ var Scheduler3 = function(startTime) {
         }
 
         var slowMelody2 = this._drawThatMelody(
-            size, 'darkgreen', [-300, -300, -1000], 'slowMelody', sepr, layer, withEdge,
+            size, 'darkgreen', [-300, -300, -1000], 'slowMelody2', sepr, layer, withEdge,
             melody
         );
 
@@ -576,7 +576,7 @@ var Scheduler3 = function(startTime) {
 
         var bigNoteConfigs = [
             {
-                'name': 'bigNote',
+                'name': 'bigNote1',
                 'pos': [1500, 200, -500],
                 'color': ColorMap['coral'][2],
                 'delay': 0,
@@ -653,7 +653,7 @@ var Scheduler3 = function(startTime) {
                 }
             }
         ).to(
-            CAMERA.rotation, 40, //start at 75 sec
+            CAMERA.rotation, 35, //start at 75 sec
             {
                 y: (Math.PI)/2,
                 onUpdate: function(){

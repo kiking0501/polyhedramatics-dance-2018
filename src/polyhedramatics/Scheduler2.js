@@ -105,7 +105,7 @@ var Scheduler2 = function(startTime) {
         // run at 15 sec
         start = setdefault(start, this.START+7.5);
 
-        var bigWoodBlock = new WoodBlock([0, 0, 0], 1000, 3, 'mediumslateblue');
+        var bigWoodBlock = new WoodBlock([0, 0, 0], 1000, 2, 'mediumslateblue');
         bigWoodBlock.name = 'bigWoodBlock';
         SCENE.add(bigWoodBlock);
 
@@ -144,7 +144,7 @@ var Scheduler2 = function(startTime) {
     this.initHugeWoodBlock = function(start) {
         start = setdefault(start, this.START+12.3);
 
-        var hugeWoodBlock = new WoodBlock([0, 0, 0], 1100, 3, 'marine');
+        var hugeWoodBlock = new WoodBlock([0, 0, 0], 1100, 2, 'marine');
         hugeWoodBlock.name = 'hugeWoodBlock';
         SCENE.add(hugeWoodBlock);
 
@@ -177,7 +177,7 @@ var Scheduler2 = function(startTime) {
             {'rest': 2.0}, {'beat': 4.0, 's': 80}, {'rest': 0.5}
         ]
 
-        this._beatWoodBlock(woodBlock, beats, .8, 30);
+        this._beatWoodBlock(woodBlock, beats, .8, 60);
     }
 
     this.expandWoodBlocks = function(){

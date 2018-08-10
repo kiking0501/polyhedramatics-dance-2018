@@ -3,7 +3,7 @@ var FlyingNote = function(center_pos, majorColor, length, size) {
     THREE.Group.apply(this, arguments);
 
     var that = this;
-    this.color = setdefault(ColorMap[majorColor], ["white", 0, majorColor])[0]
+    this.color = setdefault(ColorMap[majorColor], ["white", 0, majorColor])[2]
     this.color3 = new THREE.Color(this.color);
     this.size = size;
     this.center_pos = center_pos;
@@ -18,14 +18,26 @@ var FlyingNote = function(center_pos, majorColor, length, size) {
     this.trail_initialized = true;
     this.add(trail);
 
-    this.trailHeadPosition = new THREE.Vector3();
+    this.trailHeadPosition = new THREE.Vector3().add(pos2v(this.center_pos));
 
 }
 
 FlyingNote.prototype = Object.create(THREE.Group.prototype);
 FlyingNote.prototype.constructor = FlyingNote;
 
-FlyingNote.prototype.move = function(offset){
+FlyingNote.prototype.move = function(duration, offset) {
+    var that = this;
+    TweenLite.to(
+        that, duration,
+        {
+            onUpdate: function(){
+                that._move(offset);
+            }
+        }
+    )
+}
+
+FlyingNote.prototype._move = function(offset){
 
     var velocity = pos2v(offset);
 
@@ -49,7 +61,7 @@ FlyingNote.prototype.initTrail = function(){
     // Create the line geometry used for storing verticies
     var geometry = new THREE.Geometry();
     for (var i = 0; i < this.length; i++) {
-        geometry.vertices.push(this.position.clone());
+        geometry.vertices.push(pos2v(this.center_pos))                  ;
     }
 
     // Create the line mesh
@@ -91,7 +103,7 @@ FlyingNote.prototype.initNote = function(){
 
     var geometry = new BirdGeometry(this.size);
     var material = new THREE.MeshBasicMaterial({
-        color: new THREE.Color("white"),
+        color: this.color3,
         side: THREE.DoubleSide,
     })
 
