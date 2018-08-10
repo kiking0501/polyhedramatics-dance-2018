@@ -10,10 +10,7 @@ var Scheduler4 = function(startTime) {
         'backGroundWavePulse',
         'startFlyingNotes',
         'killSlowMelody',
-
-
-        // 'startFlyingNotes',
-
+        'anotherFlyingNotes',
     ];
 
     this.startSecond = [
@@ -22,6 +19,7 @@ var Scheduler4 = function(startTime) {
         this.START + 5.5, //backgroundwave pulse
         this.START, // startflyingNote end at +8 then callback
         this.START + 8,
+        this.START + 8.5, // anotherflyingNote end at +8 then callback
 
     ]
 
@@ -133,31 +131,39 @@ var Scheduler4 = function(startTime) {
 
         var that = this;
 
-        function flyingNoteAdvance(i){
+        function flyingNoteAdvance(ind){
 
-            var totalTime = 0.5,
-                finalColor = ColorMap['yellow'][0];
+            var totalTime = 1,
+                finalColor = ColorMap['yellow'][0],
+                minSize=3,
+                maxSize=5,
+                layerId= [1,2];
 
             for (var i = 1; i <= 5; i++){
                 var bigNote = SCENE.getObjectByName('bigNote' + i);
                 melodyNoteUtil = new MelodyNote();
-                melodyNoteUtil._changePointColor(
-                    bigNote, 0, totalTime, finalColor
-                );
+                for (var j = 0; j < layerId.length; j++){
+                    melodyNoteUtil._changePointColor(
+                        bigNote, layerId[j], totalTime, finalColor
+                    );
+                    melodyNoteUtil._changePointSize(
+                        bigNote, layerId[j], totalTime, minSize, maxSize
+                    );
+                }
             }
 
             var duration = 60,
-                speed = [0, 0, 15];
-            that.flyingNoteList[i].move(duration, speed);
+                speed = [0, 0, 20];
+            that.flyingNoteList[ind].move(duration, speed);
         }
 
-        var delay = 1.5;
+        var delay = .8;
 
         for (var i = 0; i < flyingNoteNum; i++){
 
-            var center_pos = [0, minH + (maxH-minH)/9.0*i, -4000],
+            var center_pos = [0, minH + (maxH-minH)*1.0/flyingNoteNum*i, -4000],
                 majorColor = colors[i],
-                length = 5*Math.pow(flyingNoteNum-i+1, 2),
+                length = 5.7*Math.pow(flyingNoteNum-i+1, 2),
                 size = 30;
 
             var flyingNote = new FlyingNote(
@@ -198,62 +204,88 @@ var Scheduler4 = function(startTime) {
         }
     }
 
+    this.anotherFlyingNotes = function(){
+        // arrive start at 70+8, then callback
+        var flyingNoteNum = 10;
+        var maxH = 2500,
+            minH = -3500;
 
-    // this.startFlyingNotes = function() {
+        var colors = [
+            'darkslategray',
+            'navy',
+            'mediumblue',
+            'royalblue',
+            'dodgerblue',
+            'deepskyblue',
+            'cornflowerblue',
+            'lightskyblue',
+            'skyblue',
+            'paleturquoise',
+        ]
 
+        this.flyingNoteList2 = [];
 
+        var that = this;
 
-    //     var yPos = [-3000, 2000];
-    //     var colors = ['lightblue', 'red'];
-    //     var flyingNoteList = [];
+        function flyingNoteAdvance(ind){
 
-    //     for (var i = 0; i < yPos.length; i++) {
+            var totalTime = 1,
+                finalColor = ColorMap['yellow'][0],
+                minSize=3,
+                maxSize=5,
+                layerId= [1,2];
 
-    //         var center_pos = [0, yPos[i], 0],
-    //             majorColor = colors[i],
-    //             length = 100,
-    //             size = 30;
+            for (var i = 1; i <= 5; i++){
+                var bigNote = SCENE.getObjectByName('bigNote' + i);
+                melodyNoteUtil = new MelodyNote();
+                for (var j = 0; j < layerId.length; j++){
+                    melodyNoteUtil._changePointColor(
+                        bigNote, layerId[j], totalTime, finalColor
+                    );
+                    melodyNoteUtil._changePointSize(
+                        bigNote, layerId[j], totalTime, minSize, maxSize
+                    );
+                }
+            }
 
-    //         var flyingNote = new FlyingNote(
-    //             center_pos,
-    //             majorColor,
-    //             length,
-    //             size
-    //         );
+            var duration = 60,
+                speed = [0, 0, 15];
+            that.flyingNoteList2[ind].move(duration, speed);
+        }
 
-    //         flyingNote.name = "flyingNote" + i;
-    //         flyingNoteList.push(flyingNote);
+        var delay = 1;
 
-    //         // flyingNote.name = "flyingNote";
-    //         SCENE.add(flyingNote);
+        for (var i = 0; i < flyingNoteNum; i++){
 
-    //     }
+            var center_pos = [0, minH + (maxH-minH)*1.0/flyingNoteNum*i, -4000],
+                majorColor = colors[i],
+                length = 5.5*Math.pow(flyingNoteNum-i+1, 2),
+                size = 30;
 
-    //     for (var i = 0; i < yPos.length; i++){
-    //         flyingNoteList[i].move(10, [0, 0, 10]);
+            var flyingNote = new FlyingNote(
+                center_pos,
+                majorColor,
+                length,
+                size
+            );
 
-    //     }
-    //     // var center_pos = [0, 0, 0],
-    //     //     majorColor = 'lightblue',
-    //     //     length = 100,
-    //     //     size = 30;
+            flyingNote.name = "flyingNote2_" + i;
+            SCENE.add(flyingNote);
+            this.flyingNoteList2.push(flyingNote);
 
-    //     // var flyingNote = new FlyingNote(
-    //     //     center_pos,
-    //     //     majorColor,
-    //     //     length,
-    //     //     size
-    //     // );
+            flyingNote.position.set(0,0,0);
 
-    //     // flyingNote.name = "flyingNote";
-    //     // SCENE.add(flyingNote);
+            var t = new TimelineLite();
+            t.from(
+                flyingNote.position, (this.MID - this.START),
+                {
+                    delay: delay*i,
+                    z: -10000,
+                }
+            ).call(
+                flyingNoteAdvance, [i], this, "+=0"
+            );
+        }
 
-    //     // TweenLite.to(
-    //     //     flyingNote.position, 10,
-    //     //     {
-    //     //         onUpdate: function(){flyingNote.move([0, 0, 10]);}
-    //     //     }
-    //     // )
-
-    // }
+    }
 }

@@ -250,9 +250,6 @@ var MelodyNote = function(note){
         this.note = note;
 
     }
-    this.color3List = [];
-    this.sizeList = [];
-
 }
 
 MelodyNote.prototype = Object.create(THREE.Group.prototype);
@@ -266,11 +263,6 @@ MelodyNote.prototype.pulsePoints = function(note, totalTime, minSize, maxSize, f
 
 
 MelodyNote.prototype.changePointSize = function(note, totalTime, minSize, maxSize, layerDelay, cycle){
-    var sizeList = [];
-    for (var i = 0; i < note.children.length; i++){
-        sizeList.push({size: minSize});
-    }
-    this.sizeList = sizeList;
 
     var t = new TimelineLite({paused: true});
 
@@ -287,11 +279,6 @@ MelodyNote.prototype.changePointSize = function(note, totalTime, minSize, maxSiz
 
 
 MelodyNote.prototype.changePointColor = function(note, totalTime, finalColor, layerDelay, cycle){
-    var color3List = [];
-    for (var i = 0; i < note.children.length; i++){
-        color3List.push({color: note.children[i].material.color.clone()});
-    }
-    this.color3List = color3List;
 
     var t = new TimelineLite({paused: true});
 
@@ -311,6 +298,15 @@ MelodyNote.prototype.changePointColor = function(note, totalTime, finalColor, la
 MelodyNote.prototype._changePointSize = function(note, child_ind, totalTime, minSize, maxSize, cycle){
     var that = this;
     cycle = setdefault(cycle, true);
+
+    if (!this.hasOwnProperty("sizeList")) {
+        var sizeList = [];
+        for (var i = 0; i < note.children.length; i++){
+            sizeList.push({size: minSize});
+        }
+        this.sizeList = sizeList;
+
+    }
 
     function changeSize(){
 
@@ -352,6 +348,16 @@ MelodyNote.prototype._changePointColor = function(note, child_ind, totalTime, fi
 
     var that = this;
     cycle = setdefault(cycle, true);
+
+    if (!this.hasOwnProperty("color3List")) {
+        var color3List = [];
+        for (var i = 0; i < note.children.length; i++){
+            color3List.push({color: note.children[i].material.color.clone()});
+        }
+        this.color3List = color3List;
+        console.log('yes')
+    }
+
 
     function changeColor(){
         var material = note.children[child_ind].material;
