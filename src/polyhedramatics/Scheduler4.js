@@ -2,7 +2,7 @@ var Scheduler4 = function(startTime) {
     var that = this;
 
     this.START = setdefault(startTime, 70);
-    this.MID = this.START + 17; // 87sec
+    this.MID = this.START + 9; // 87sec
 
     this.program = [
         'addBackGroundWave',
@@ -82,7 +82,7 @@ var Scheduler4 = function(startTime) {
         var center_pos = [0, 0, 1000],
             majorColor = 'lightblue',
             length = 100,
-            size = 20;
+            size = 30;
 
         var flyingNote = new FlyingNote(
             center_pos,
@@ -94,6 +94,12 @@ var Scheduler4 = function(startTime) {
         flyingNote.name = "flyingNote";
         SCENE.add(flyingNote);
 
+        TweenLite.to(
+            flyingNote.position, 10,
+            {
+                onUpdate: function(){flyingNote.move([0, 0, 10]);}
+            }
+        )
 
     }
 }

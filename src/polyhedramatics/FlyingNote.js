@@ -18,14 +18,27 @@ var FlyingNote = function(center_pos, majorColor, length, size) {
     this.trail_initialized = true;
     this.add(trail);
 
+    this.trailHeadPosition = new THREE.Vector3();
+
 }
 
 FlyingNote.prototype = Object.create(THREE.Group.prototype);
 FlyingNote.prototype.constructor = FlyingNote;
 
-FlyingNote.prototype.move = function(){
+FlyingNote.prototype.move = function(offset){
 
+    var velocity = pos2v(offset);
 
+    this.trailHeadPosition.add(velocity);
+
+    if (this.trail_initialized) {
+        this.trailLine.advance(this.trailHeadPosition);
+    }
+
+    this.note.position.set(this.trailHeadPosition.x,
+                           this.trailHeadPosition.y,
+                           this.trailHeadPosition.z
+                           );
 
 }
 
@@ -40,18 +53,18 @@ FlyingNote.prototype.initTrail = function(){
     }
 
     // Create the line mesh
-    meshLine = new MeshLine();
-    meshLine.setGeometry(
+    var trailLine = new MeshLine();
+    trailLine.setGeometry(
         geometry,
         function(p){ return p; } // set width taper
     )
 
     // Create the line material
-    material = new MeshLineMaterial({
-        color: new THREE.Color(this.color),
+    var trailMaterial = new MeshLineMaterial({
+        color: this.color3,
         opacity: 1,
         sizeAttenuation: 1,
-        lineWidth: 1,
+        lineWidth: 10,
         near: 1,
         far: 100000,
         depthTest: false,
@@ -60,15 +73,14 @@ FlyingNote.prototype.initTrail = function(){
         side: THREE.DoubleSide
     })
 
-    trail = new THREE.Mesh(
-        meshLine.geometry,
-        material
+    var trail = new THREE.Mesh(
+        trailLine.geometry,
+        trailMaterial
     );
-
     trail.frustumCulled = false;
 
-    this.meshLine = meshLine;
-    this.trail_material = material;
+    this.trailLine = trailLine;
+    this.trailMaterial = trailMaterial;
 
     return trail;
 
