@@ -100,6 +100,8 @@ SoundWave.prototype.changeParticleColor = function(totalTime, finalColor, cycle)
     var t = new TimelineLite({paused: true});
     var duration = cycle?totalTime/2.0:totalTime;
 
+    TweenLite.killTweensOf(that.color3);
+
     t = t.to(
         that.color3, duration,
         {
@@ -138,6 +140,8 @@ SoundWave.prototype.changeParticleSize = function(totalTime, minSize, maxSize, c
     var t = new TimelineLite({paused: true});
 
     var duration = cycle?totalTime/2.0:totalTime;
+
+    TweenLite.killTweensOf(that.size);
 
     t = t.to(
         that, duration,

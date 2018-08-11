@@ -105,7 +105,9 @@ function render(timestamp) {
     if (!START) {START = timestamp};
     var progress = ((timestamp - START) / 1000 +
                     parseFloat($("#inputStart").val())).toFixed(2);
-    $('#timestamp').html(progress);
+    if (!PAUSE){
+        $('#timestamp').html(progress);
+    }
 
     RENDERER.render(SCENE, CAMERA);
 

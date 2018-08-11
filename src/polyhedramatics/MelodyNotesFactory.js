@@ -355,7 +355,6 @@ MelodyNote.prototype._changePointColor = function(note, child_ind, totalTime, fi
             color3List.push({color: note.children[i].material.color.clone()});
         }
         this.color3List = color3List;
-        console.log('yes')
     }
 
 

@@ -143,7 +143,7 @@ var Scheduler3 = function(startTime) {
             majorColor = 'black',
             size = 10,
             // dist = 500;
-            dist = 500;
+            dist = 800;
 
         var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
         soundWave.name = 'highPitchSoundWave';
