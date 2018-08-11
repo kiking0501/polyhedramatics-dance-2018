@@ -1,4 +1,4 @@
-var FlyingNote = function(center_pos, majorColor, length, size, shapeType, wireWidth, trailWidth) {
+var FlyingNote = function(center_pos, majorColor, length, size, shapeType, wireWidth, trailWidth, trailBlending) {
 
     THREE.Group.apply(this, arguments);
 
@@ -11,15 +11,11 @@ var FlyingNote = function(center_pos, majorColor, length, size, shapeType, wireW
     this.shapeType = shapeType;
     this.wireWidth = wireWidth;
     this.trailWidth = setdefault(trailWidth, 10);
+    this.trailBlending = setdefault(trailBlending, THREE.AdditiveBlending);
 
     var note = this.initNote();
     this.note = note;
     this.add(note);
-
-    this.oriVertices = [];
-    for (var i = 0; i < note.geometry.vertices.length; i++) {
-        this.oriVertices[i] = v2pos(note.geometry.vertices[i]);
-    }
 
     var trail = this.initTrail();
     this.trail = trail;
@@ -32,7 +28,6 @@ var FlyingNote = function(center_pos, majorColor, length, size, shapeType, wireW
 
 FlyingNote.prototype = Object.create(THREE.Group.prototype);
 FlyingNote.prototype.constructor = FlyingNote;
-
 
 FlyingNote.prototype.oscillate = function(timeLapse, strength) {
 
@@ -122,6 +117,7 @@ FlyingNote.prototype._move = function(offset, rotation){
 
 }
 
+
 FlyingNote.prototype.initTrail = function(){
 
     // adopted & modified from THREE.MeshLine birds.html / Boid object
@@ -136,7 +132,10 @@ FlyingNote.prototype.initTrail = function(){
     var trailLine = new MeshLine();
     trailLine.setGeometry(
         geometry,
-        function(p){ return p; } // set width taper
+        function(p){
+            return p;
+            // return 2 + Math.sin( 50 * p );
+        } // set width taper
     )
 
     // Create the line material
@@ -148,8 +147,8 @@ FlyingNote.prototype.initTrail = function(){
         near: 1,
         far: 100000,
         depthTest: false,
-        blending: THREE.AdditiveBlending,
-        transparent: false,
+        blending: this.trailBlending,
+        transparent: true,
         side: THREE.DoubleSide
     })
 
@@ -161,6 +160,7 @@ FlyingNote.prototype.initTrail = function(){
 
     this.trailLine = trailLine;
     this.trailMaterial = trailMaterial;
+    trail.name = "trail";
 
     return trail;
 
@@ -169,11 +169,21 @@ FlyingNote.prototype.initTrail = function(){
 
 FlyingNote.prototype.initNote = function(){
 
-    var note = this.createNoteMesh(this.shapeType, this.wireWidth);
+    if (this.shapeType) {
+        var note = this.createNoteMesh(this.shapeType, this.wireWidth);
 
-    note.position.set(this.center_pos[0], this.center_pos[1], this.center_pos[2]);
-    note.rotation.set(Math.PI/5, Math.PI/5, 0)
-    return note;
+        note.position.set(this.center_pos[0], this.center_pos[1], this.center_pos[2]);
+        note.rotation.set(Math.PI/5, Math.PI/5, 0)
+
+        this.oriVertices = [];
+        for (var i = 0; i < note.geometry.vertices.length; i++) {
+            this.oriVertices[i] = v2pos(note.geometry.vertices[i]);
+        }
+
+        return note;
+    } else {
+        return new THREE.Group();
+    }
 }
 
 

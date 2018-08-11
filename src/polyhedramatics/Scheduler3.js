@@ -663,7 +663,9 @@ var Scheduler3 = function(startTime) {
                 ease: Power2.easeOut,
             }
 
-        ).call(function(){console.log(CAMERA.position)});
+        ).call(function(){
+
+        });
 
         t.play();
     }

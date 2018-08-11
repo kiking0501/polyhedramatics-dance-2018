@@ -32,6 +32,30 @@ WoodBlock.prototype.createCube = function(w, h, d, tri, majorColor) {
     return cube;
 }
 
+WoodBlock.prototype.beat = function(beats, bpm, br, s) {
+
+    var t = new TimelineLite({paused: true});
+
+    var bpm=bpm, prev_rest=0.0, br=br, s=s;
+    for ( var i = 0; i < beats.length; i++) {
+
+        if ('beat' in beats[i]){
+            t = t.call(
+                this.cubePulse,
+                [beats[i]['beat']*bpm*setdefault(beats[i]['br'], br),
+                 setdefault(beats[i]['s'], s)],
+                this, prev_rest.toFixed(3)
+            )
+
+            prev_rest += beats[i]['beat']*bpm;
+        } else {
+            prev_rest += beats[i]['rest']*bpm;
+        }
+    }
+    t.play();
+
+}
+
 
 WoodBlock.prototype.cubePulse = function(timeLapse, strength) {
 

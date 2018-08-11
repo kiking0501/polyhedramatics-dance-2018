@@ -21,6 +21,7 @@ var SCHEDULE_LIST = [
     new Scheduler2(),
     new Scheduler3(),
     new Scheduler4(),
+    new Scheduler5(),
 ]
 
 function changeInputStart(ele){

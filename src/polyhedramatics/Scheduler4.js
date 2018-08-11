@@ -15,11 +15,15 @@ var Scheduler4 = function(startTime) {
         'flyingNotes3',
         'flyingNotes4',
         'rotateCamera',
+        'speedUpCamera',
         'cleanFlyingNotesTunnel',
+        'createPlanet',
         'beatWoodBlocks',
+        'cleanBackGroundWave',
+        'rushWoodBlockCenter',
     ];
 
-    this.startSecond = [
+    this.startSecond = [ // checkpoint at 60 sec from last Scheduler
         this.START, // shineTunnel
         this.START,
         this.START + 5.5, //backgroundwave pulse
@@ -30,9 +34,23 @@ var Scheduler4 = function(startTime) {
         this.START + 35, // flyingNote3 end at +8 then callback
         this.START + 41, // flyingNote4 end at +8 then callback
         this.START + 45, // rotate camera
+        this.START + 65.5, // speedUp camera at 135sec, as a checkpoint
         this.START + 65, // displse flyingnotes when they are out of farplane
-        this.START + 83.5, // beatWoodBlocks
+        this.START + 83, // createPlanet at woodBlockCenter
+        this.START + 83, // beatWoodBlocks, 153sec
+        this.START + 83, // clean background wave
+        this.START + 87, // rushWoodBlockCenter
+
     ]
+
+    this.finalCameraPosition = [-400, 6.12, -6665]; //final after rotateCamera
+    this.finalViewZ = -17000;
+
+    this.woodBlockCenterPos = [
+         this.finalCameraPosition[0],  this.finalCameraPosition[1],
+        -15000
+    ];
+
 
     this._shineTunnel = function(totalTime, minSize, maxSize, layerDelay){
 
@@ -461,7 +479,7 @@ var Scheduler4 = function(startTime) {
             ).call(
                 flyingNoteAdvance, [i], this, "+=0"
             ).call(
-                flyingNote.oscillate, [30, 200], flyingNote, "+=0"
+                flyingNote.oscillate, [30, 50], flyingNote, "+=0"
             );
         }
 
@@ -539,11 +557,11 @@ var Scheduler4 = function(startTime) {
     }
 
     this.rotateCamera = function(){
+        // start at 70 + 45
+        var that = this;
 
-        var t = new TimelineLite({paused: true});
-
-        t.to(
-            CAMERA.rotation, 20, //start at 105 sec
+        TweenLite.to(
+            CAMERA.rotation, 19.5, //start at 115 sec
             {
                 y: (Math.PI),
                 onUpdate: function(){
@@ -552,19 +570,78 @@ var Scheduler4 = function(startTime) {
                     CAMERA.position.z -= 15;
                 },
                 ease: Power0.easeOut,
+                onComplete: function(){
+                    TweenLite.to(
+                        CAMERA.position, 1, {
+                            x: that.finalCameraPosition[0],
+                            y: that.finalCameraPosition[1],
+                            z: that.finalCameraPosition[2],
+                        }
+                    );
+                }
             }
 
-        ).to(
-            CAMERA.position, 30,
+        )
+
+    }
+
+    this.speedUpCamera = function(){
+        // start at 70 + 45 + 20 = 135 sec, after roation
+        // as a checkpoint
+
+        var backGroundWave = SCENE.getObjectByName('backGroundWave');
+        if (!backGroundWave) {
+
+            var angle = Math.PI + Math.PI/2/2;
+            var dist = 2000;
+            var center_pos = [0, Math.cos(angle), -dist + dist* Math.sin(angle)],
+                xNum = 50,
+                yNum = 50,
+                zNum = 30,
+                majorColor = 'royalblue',
+                size = 30,
+                dist = 300,
+                isLattice = true;
+
+            var backGroundWave = new SoundWave(
+                center_pos, xNum, yNum, zNum, majorColor, size, dist, isLattice
+            );
+            backGroundWave.position.set(0, 0, -280);
+            backGroundWave.name = 'backGroundWave';
+            SCENE.add(backGroundWave);
+
+
+            CAMERA.position.set(
+                this.finalCameraPosition[0],
+                this.finalCameraPosition[1],
+                this.finalCameraPosition[2]
+            );
+            CAMERA.rotation.y = Math.PI;
+
+        }
+
+        TweenLite.to(
+            CAMERA.position, 21.5, // start at 135
             {
                 onUpdate: function(){
                     CAMERA.position.z -= 15.5;
+                    // console.log(CAMERA.position);
+                },
+
+                onComplete: function(){ //156.5 to 157
+                    TweenLite.to(
+                        CAMERA.position, .5,
+                        {
+                            z: this.finalViewZ,
+                            ease: Linear.easeNone,
+                        }
+                    );
                 }
             }
         );
 
-        t.play();
     }
+
 
     this.cleanFlyingNotesTunnel = function(){
 
@@ -585,7 +662,195 @@ var Scheduler4 = function(startTime) {
 
     }
 
-    this.beatWoodBlocks = function(){
+    this.createPlanet = function(){
+        var radius = 10,
+            wS = 20,
+            hS = 20;
+
+        var geometry = new THREE.SphereGeometry(
+                radius, wS, hS
+            );
+        var material = new THREE.MeshPhongMaterial(
+                {
+                    color: "blanchedalmond",
+                    side: THREE.DoubleSide,
+                    flatShading: true,
+                    wireframe: true,
+                }
+            );
+        var sphere = new THREE.Mesh(geometry, material);
+        sphere.position.set(
+            this.woodBlockCenterPos[0],
+            this.woodBlockCenterPos[1],
+            this.woodBlockCenterPos[2]
+        )
+        sphere.name = "sphere";
+        SCENE.add(sphere);
+
+        TweenLite.to(
+            sphere.scale, 5,
+            {
+                x: 50,
+                y: 50,
+                z: 50,
+                ease: Power4.easeIn,
+            }
+        )
+        TweenLite.to(
+            sphere.rotation, 25,
+            {
+                x: 0.001,
+            }
+        )
 
     }
+    this.beatWoodBlocks = function(){
+
+        console.log(CAMERA.position);
+
+        var backGroundWave = SCENE.getObjectByName("backGroundWave");
+        if (!backGroundWave){
+            CAMERA.position.set(
+                this.finalCameraPosition[0],
+                this.finalCameraPosition[1],
+                this.finalViewZ - 100
+            )
+        }
+
+        console.log(CAMERA.position);
+
+        var center_pos = this.woodBlockCenterPos;
+
+        var scale = 3;
+
+        var woodBlockSettings = {
+            small: {
+                center_pos: center_pos,
+                size: 300*scale,
+                tri: 2,
+                majorColor: 'coral',
+                rotate: {
+                    x: 0,
+                    y: 0.01,
+                    z: 0,
+                    timeLapse: 1,
+                    repeat: 20,
+                },
+                beats: [
+                    {'beat': 6.5},
+                    {'beat': 2}, {'beat': 2}, {'beat': .9}, {'beat': .9}, {'rest': .7},
+                    {'beat': 2}, {'beat': 1.8}, {'beat': 1.8}, {'rest': .9},
+                ],
+                bpm: 60/100/2,
+                br: .8,
+                s: 80*scale,
+            },
+            big: {
+                center_pos: center_pos,
+                size: 1000*scale,
+                tri: 2,
+                majorColor: 'mediumslateblue',
+                rotate: {
+                    x: 0.005,
+                    y: 0,
+                    z: 0,
+                    timeLapse: 1,
+                    repeat: 20,
+                },
+                beats: [
+                    {'rest': 2.0}, {'beat': 4.5},
+                    {'beat': 2.0}, {'rest': 1.25}, {'beat': 2.0}, {'rest': 1.25},
+                    {'beat': 2.0}, {'rest': 1.25}, {'beat': 2.0}, {'rest': 1.25},
+                ],
+                bpm: 60/100/2,
+                br: .8,
+                s: 150*scale,
+            },
+            huge: {
+                center_pos: center_pos,
+                size: 1100*scale,
+                tri: 2,
+                majorColor: 'marine',
+                rotate: {
+                    x: 0,
+                    y: 0,
+                    z: 0.005,
+                    timeLapse: 1,
+                    repeat: 20
+                },
+                beats: [
+                    {'rest': 5.25}, {'beat': 1.25},
+                    {'rest': 3.25}, {'beat': 2.0}, {'rest': 1.25},
+                    {'rest': 3.25}, {'beat': 2.0}, {'rest': 1.25},
+                ],
+                bpm: 60/100/2,
+                br: .8,
+                s: 60*scale,
+            }
+        }
+
+        for (var name in woodBlockSettings) {
+            var config = woodBlockSettings[name];
+
+            var woodBlock = new WoodBlock(
+                config['center_pos'], config['size'], config['tri'], config['majorColor']
+            );
+            woodBlock.name = name + 'WoodBlock';
+
+            SCENE.add(woodBlock);
+
+            woodBlock.cubeRotate(
+                config['rotate']['x'], config['rotate']['y'], config['rotate']['z'], config['rotate']['timeLapse'], config['rotate']['repeat']
+            )
+
+            woodBlock.beat(
+                config['beats'], config['bpm'], config['br'], config['s']
+            );
+
+        }
+    }
+
+    this.cleanBackGroundWave = function(){
+        // at 160 sec
+        var backGroundWave = SCENE.getObjectByName('backGroundWave');
+        var t = new TimelineLite();
+        t.call(
+            backGroundWave.changeParticleColor, [5, "black", false], backGroundWave
+        ).call(
+            function(){
+                SCENE.remove(backGroundWave);
+                disposeHierarchy(backGroundWave);
+            },
+            [],
+            backGroundWave,
+            "+=5"
+        );
+    }
+
+    this.rushWoodBlockCenter = function(){
+        // at 70 + 87 = 157 sec
+
+        TweenLite.to(
+            CAMERA.position, 1.5,
+            {
+                x: this.woodBlockCenterPos[0],
+                y: this.woodBlockCenterPos[1],
+                z: this.woodBlockCenterPos[2],
+                ease: Power1.easeIn,
+                onComplete: function(){
+
+                    var names = ["smallWoodBlock", "bigWoodBlock", "hugeWoodBlock", "sphere"];
+                    for (var i = 0; i < names.length; i++){
+                        var obj = SCENE.getObjectByName(names[i]);
+                        if (obj) {
+                            SCENE.remove(obj);
+                            disposeHierarchy(obj);
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+
 }

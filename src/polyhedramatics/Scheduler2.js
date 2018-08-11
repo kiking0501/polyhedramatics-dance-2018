@@ -38,30 +38,6 @@ var Scheduler2 = function(startTime) {
         disposeHierarchy(soundWave);
     }
 
-    this._beatWoodBlock = function(woodBlock, beats, br, s) {
-
-        var t = new TimelineLite({paused: true});
-
-        var bpm = 60/100/2, prev_rest=0.0, br=br, s=s;
-        for ( var i = 0; i < beats.length; i++) {
-
-            if ('beat' in beats[i]){
-                t = t.call(
-                    woodBlock.cubePulse,
-                    [beats[i]['beat']*bpm*setdefault(beats[i]['br'], br),
-                     setdefault(beats[i]['s'], s)],
-                    woodBlock, prev_rest.toFixed(3)
-                )
-
-                prev_rest += beats[i]['beat']*bpm;
-            } else {
-                prev_rest += beats[i]['rest']*bpm;
-            }
-        }
-        t.play();
-
-    }
-
     this.initWoodBlock = function() {
         // run at 8 sec
         var woodBlock = new WoodBlock([0, 0, 0], 300, 2, 'coral');
@@ -97,7 +73,10 @@ var Scheduler2 = function(startTime) {
             {'beat': 2}, {'beat': 2.5}, {'rest': 2.},
         ]
 
-        this._beatWoodBlock(woodBlock, beats, .8, 80);
+        var bpm = 60/100/2,
+            br = .8,
+            s = 80;
+        woodBlock.beat(beats, bpm, br, s);
 
     }
 
@@ -138,7 +117,11 @@ var Scheduler2 = function(startTime) {
             {'rest': 2.0}, {'beat': 4.0, 's': 80}, {'rest': 0.5},
         ]
 
-        this._beatWoodBlock(woodBlock, beats, .8, 150);
+        var bpm = 60/100/2,
+            br = .8,
+            s = 150;
+        woodBlock.beat(beats, bpm, br, s);
+
     }
 
     this.initHugeWoodBlock = function(start) {
@@ -177,7 +160,10 @@ var Scheduler2 = function(startTime) {
             {'rest': 2.0}, {'beat': 4.0, 's': 80}, {'rest': 0.5}
         ]
 
-        this._beatWoodBlock(woodBlock, beats, .8, 60);
+        var bpm = 60/100/2,
+            br = .8,
+            s = 60;
+        woodBlock.beat(beats, bpm, br, s);
     }
 
     this.expandWoodBlocks = function(){
@@ -189,11 +175,6 @@ var Scheduler2 = function(startTime) {
             'bigWoodBlock': this.initBigWoodBlock,
             'hugeWoodBlock': this.initHugeWoodBlock,
         };
-
-
-        function updateCube(wb){
-            wb.cube.material.needsUpdate = true;
-        }
 
         for (var i = 0; i < names.length; i++){
             var woodBlock = SCENE.getObjectByName(names[i]);
