@@ -13,8 +13,108 @@ var ColorMap = {
     'coral': ['mistyrose', 'lightsalmon', 'salmon'],
     'red': ['lightcoral', 'red', 'firebrick'],
     'grey': ['white', 'whitesmoke', 'gainsboro', 'lightgrey', 'silver', 'darkgray', 'gray', 'dimgray', 'black'],
+    'fullblue': [
+        'darkslategray',
+        'navy',
+        'mediumblue',
+        'royalblue',
+        'dodgerblue',
+        'deepskyblue',
+        'cornflowerblue',
+        'lightskyblue',
+        'skyblue',
+        'paleturquoise',
+    ],
 }
 
+
+function changeMaterialColor(scope, objName, totalTime, finalColor, cycle){
+    // change color of obj (which is a member of scope)
+    // requires 'color3' (THREE.Color instance) present also in scope
+
+    var that = scope;
+    cycle = setdefault(cycle, true);
+
+    function changeColor(){
+        var material = that[objName].material;
+        material.color.r = that['color3'].r;
+        material.color.g = that['color3'].g;
+        material.color.b = that['color3'].b;
+        material.needsUpdate = true;
+    }
+
+    var oriColor3 = scope['color3'].clone();
+    var finalColor3 = new THREE.Color(finalColor);
+
+    var t = new TimelineLite({paused: true});
+    var duration = cycle?totalTime/2.0:totalTime;
+
+    TweenLite.killTweensOf(scope['color3']);
+
+    t = t.to(
+        scope['color3'], duration,
+        {
+            r: finalColor3.r,
+            g: finalColor3.g,
+            b: finalColor3.b,
+            onUpdate: changeColor,
+        }
+    )
+
+    if (cycle){
+        t = t.to(
+            scope['color3'], duration,
+            {
+                r: oriColor3.r,
+                g: oriColor3.g,
+                b: oriColor3.b,
+                onUpdate: changeColor,
+            }
+        )
+    }
+    t.play();
+
+}
+
+function changePointMaterialSize(scope, objName, totalTime, minSize, maxSize, cycle){
+    // change point size of PointMaterial of obj (which is a member of scope)
+    // requires 'size' (THREE.Color instance) present also in scope
+
+    var that = scope;
+    cycle = setdefault(cycle, true);
+
+    function changeSize(){
+
+        var material = that[objName].material;
+        material.size = that['size'];
+        material.needsUpdate = true;
+
+    }
+    var t = new TimelineLite({paused: true});
+
+    var duration = cycle?totalTime/2.0:totalTime;
+
+    TweenLite.killTweensOf(that['size']);
+
+    t = t.to(
+        that, duration,
+        {
+            size: maxSize,
+            onUpdate: changeSize,
+        }
+    )
+
+    if (cycle){
+        t = t.to(
+            that, duration,
+            {
+                size: minSize,
+                onUpdate: changeSize,
+            }
+        )
+    }
+    t.play();
+}
 
 function calPolygonVertices(N, r, startAngle, anticlockwise) {
     // calcluate polygon using polar coordinates
@@ -93,6 +193,12 @@ function disposeNode (node)
 
 function disposeHierarchy (node, callback)
 {
+
+    if (typeof node == "undefined"){
+        console.log("[Dispose Warning] NodeNotFound.");
+        return;
+    }
+
     for (var i = node.children.length - 1; i >= 0; i--)
     {
         var child = node.children[i];

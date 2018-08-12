@@ -10,7 +10,7 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
     this.settings = {
         'dim': {
             'nodeRadius': this.r / 25,
-            'edgeColor': ColorMap['grey'][7],
+            'edgeColor': setdefault(this.customSettings['dimEdgeColor'],                    ColorMap['grey'][7]),
             'edgeWidth': 1,
         },
         'shine': {
@@ -29,6 +29,8 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
         'l': 9,
         't': 11,
     };
+    this.importNodesInd = new Set([0, 2, 4, 5, 7, 9, 11]);
+
     for (var i = 0; i < 12; i++) { this.noteMap[i] = i; }
 
     // create vertices
@@ -74,7 +76,9 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
         var node = this.createNode(
             this.vertices[i],
             colors[i],
-            this.settings['dim']['nodeRadius']
+            this.settings['dim']['nodeRadius'],
+            this.importNodesInd.has(i),
+            (i == 0)
         )
         this.add(node);
         this.nodes.push(node);
@@ -100,18 +104,70 @@ MusicClock.prototype.createEdge = function(st_v, et_v, color, lineWidth) {
 }
 
 
-MusicClock.prototype.createNode = function(pos, color, r) {
-    var geometry = new THREE.CircleGeometry(r, 1000);
-    var material = new THREE.MeshBasicMaterial(
-        {color: new THREE.Color(color)}
+MusicClock.prototype.createNode = function(pos, color, r, isImptNode, isTonic) {
+    isTonic = setdefault(isTonic, false);
+
+    if (isTonic) { r = 1.5*r; }
+
+    var circleShape = new THREE.Shape();
+    circleShape.moveTo(0, r);
+    circleShape.quadraticCurveTo(r, r, r, 0);
+
+    if (isImptNode) {
+        circleShape.quadraticCurveTo(r, -r, 1.2*r, -r);
+    } else {
+        circleShape.quadraticCurveTo(r, -r, 0, -r);
+    }
+    // circleShape.quadraticCurveTo(r, -r, 0, -r)
+    circleShape.quadraticCurveTo(-r, -r, -r, 0);
+    circleShape.quadraticCurveTo(-r, r, 0, r);
+
+    var shapeFactory = new ShapeFactory(
+        circleShape, color, pos[0], pos[1], pos[2], 0, 0, 0
     );
-    var circle = new THREE.Mesh(geometry, material);
+
+    if (r > 100) {
+        var extrudeSettings = {
+            depth: 2,
+            bevelEnabled: false,
+            bevelSegments: 2,
+            steps: 2,
+            bevelSize: 1,
+            bevelThickness:1
+        }
+
+        var circle = shapeFactory.addShape(
+            "extrude", extrudeSettings
+        )
+    }
+
+    else {
+
+        var circle = shapeFactory.addShape(
+            "flat"
+        )
+
+    }
     circle.position.set(pos[0], pos[1], pos[2]);
 
     return circle;
+
+    // old circle geometry
+    // var geometry = new THREE.CircleGeometry(
+    //     (imptNode? r * 2: r),
+    // 1000);
+    // var material = new THREE.MeshBasicMaterial(
+    //     {
+    //         color: new THREE.Color(color),
+    //         side: THREE.DoubleSide
+    //     }
+    // );
+    // var circle = new THREE.Mesh(geometry, material);
+
 }
 
 MusicClock.prototype.pulse = function(chords, timeLapse, repeat, betweenDelay) {
+    var firstDelay = (betweenDelay > 0)? .1: 0.0
 
     for (var i = 0; i < chords.length; i++) {
         var chord = chords[i];
@@ -121,15 +177,16 @@ MusicClock.prototype.pulse = function(chords, timeLapse, repeat, betweenDelay) {
             // node movement
             var t_n = new TimelineLite();
             for (var r = 0; r < repeat; r++) {
-                var delay = (r == 0? .1: betweenDelay);
+                var delay = (r == 0? firstDelay: betweenDelay);
                 this._pulseNode(node_ind, timeLapse, t_n, delay);
+                // console.log(chord);
             }
             // edge movement
             if (j == 0) { continue; }
             var edge_ind = node_ind * 12 + this.noteMap[chord[j-1]];
             var t_e = new TimelineLite();
             for (var r = 0; r < repeat; r++) {
-                var delay = (r == 0? .1: betweenDelay);
+                var delay = (r == 0? firstDelay: betweenDelay);
                 this._pulseEdge(edge_ind, timeLapse, t_e, delay);
             }
         }

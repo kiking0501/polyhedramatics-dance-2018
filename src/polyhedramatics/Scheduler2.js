@@ -40,11 +40,11 @@ var Scheduler2 = function(startTime) {
 
     this.initWoodBlock = function() {
         // run at 8 sec
-        var woodBlock = new WoodBlock([0, 0, 0], 300, 2, 'coral');
+        var woodBlock = new WoodBlock([0, 0, 0], 300, 2, 'coral', "woodCube", 1.5);
         woodBlock.name = 'woodBlock';
         SCENE.add(woodBlock);
 
-        woodBlock.cubeRotate(0, 0.01, 0, 1, this.MID-this.START-0.01);
+        woodBlock.polyRotate(0, 0.01, 0, 1, this.MID-this.START-0.01);
         return woodBlock;
 
     }
@@ -84,11 +84,11 @@ var Scheduler2 = function(startTime) {
         // run at 15 sec
         start = setdefault(start, this.START+7.5);
 
-        var bigWoodBlock = new WoodBlock([0, 0, 0], 1000, 2, 'mediumslateblue');
+        var bigWoodBlock = new WoodBlock([0, 0, 0], 1000, 2, 'mediumslateblue', "woodCube", 1.5);
         bigWoodBlock.name = 'bigWoodBlock';
         SCENE.add(bigWoodBlock);
 
-        bigWoodBlock.cubeRotate(0.005, 0, 0, 1, this.MID-start);
+        bigWoodBlock.polyRotate(0.005, 0, 0, 1, this.MID-start);
         return bigWoodBlock;
     }
 
@@ -127,11 +127,11 @@ var Scheduler2 = function(startTime) {
     this.initHugeWoodBlock = function(start) {
         start = setdefault(start, this.START+12.3);
 
-        var hugeWoodBlock = new WoodBlock([0, 0, 0], 1100, 2, 'marine');
+        var hugeWoodBlock = new WoodBlock([0, 0, 0], 1100, 2, 'marine', "woodCube", 1.5);
         hugeWoodBlock.name = 'hugeWoodBlock';
         SCENE.add(hugeWoodBlock);
 
-        hugeWoodBlock.cubeRotate(0, 0, 0.005, 1, this.MID-start);
+        hugeWoodBlock.polyRotate(0, 0, 0.005, 1, this.MID-start);
         return hugeWoodBlock;
 
     }

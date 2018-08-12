@@ -88,6 +88,7 @@ function polyAnimate(inputStart) {
         }
     }
 
+
     RESTART = false;
     TIMELINE.play(inputStart);
 
@@ -103,26 +104,32 @@ function polyAnimate(inputStart) {
 }
 
 function render(timestamp) {
-    if (!START) {START = timestamp};
-    var progress = ((timestamp - START) / 1000 +
-                    parseFloat($("#inputStart").val())).toFixed(2);
-    if (!PAUSE){
-        $('#timestamp').html(progress);
-    }
+    var inputStart = parseFloat($("#inputStart").val());
 
-    RENDERER.render(SCENE, CAMERA);
-
-    if (!RESTART) {
-        requestAnimationFrame(render);
-    } else if (PAUSE) {
-        START = null;
-        SOUND.stop();
+    if (!isFinite(inputStart)) {
+        console.log('warning for inputStart', inputStart);
     } else {
-        $('#timestamp').html("");
-        START = null;
-        SOUND.stop();
-    }
 
+        if (!START) {START = timestamp};
+        var progress = ((timestamp - START) / 1000 + inputStart).toFixed(2);
+        if (!PAUSE){
+            $('#timestamp').html(progress);
+        }
+
+        RENDERER.render(SCENE, CAMERA);
+
+        if (!RESTART) {
+            requestAnimationFrame(render);
+        } else if (PAUSE) {
+            START = null;
+            SOUND.stop();
+        } else {
+            $('#timestamp').html("");
+            START = null;
+            SOUND.stop();
+        }
+
+    }
     // CONTROLS.update(); // FIXME: affect camera rotation
 }
 
@@ -158,6 +165,17 @@ function init() {
         cameraLookAt = [0, 0, 0];
     /////////////
     // set CAMERA
+
+    // turn this on to see funny effect
+    // CAMERA = new THREE.OrthographicCamera(
+    //     -WIDTH, // / 2,
+    //     WIDTH, // / 2,
+    //     HEIGHT, // / 2,
+    //     -HEIGHT, // / 2,
+    //     nearClippingPane,
+    //     farClippingPane
+    // )
+
     CAMERA = new THREE.PerspectiveCamera(
         fieldOfView, aspectRatio, nearClippingPane, farClippingPane
     );

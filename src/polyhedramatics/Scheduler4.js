@@ -15,12 +15,12 @@ var Scheduler4 = function(startTime) {
         'flyingNotes3',
         'flyingNotes4',
         'rotateCamera',
-        'speedUpCamera',
+        'speedUpCamera', //135
         'cleanFlyingNotesTunnel',
-        'createPlanet',
-        'beatWoodBlocks',
+        'beatWoodBlocks', //153
         'cleanBackGroundWave',
-        'rushWoodBlockCenter',
+        'createPlanets',
+        'rushWoodBlockCenterAndReset',
     ];
 
     this.startSecond = [ // checkpoint at 60 sec from last Scheduler
@@ -36,21 +36,20 @@ var Scheduler4 = function(startTime) {
         this.START + 45, // rotate camera
         this.START + 65.5, // speedUp camera at 135sec, as a checkpoint
         this.START + 65, // displse flyingnotes when they are out of farplane
-        this.START + 83, // createPlanet at woodBlockCenter
         this.START + 83, // beatWoodBlocks, 153sec
-        this.START + 83, // clean background wave
+        this.START + 76, // clean background wave
+        this.START + 83, // createPlanet at woodBlockCenter
         this.START + 87, // rushWoodBlockCenter
 
     ]
 
     this.finalCameraPosition = [-400, 6.12, -6665]; //final after rotateCamera
-    this.finalViewZ = -17000;
+    this.finalViewZ = -18000;
 
     this.woodBlockCenterPos = [
          this.finalCameraPosition[0],  this.finalCameraPosition[1],
         -15000
     ];
-
 
     this._shineTunnel = function(totalTime, minSize, maxSize, layerDelay){
 
@@ -219,54 +218,35 @@ var Scheduler4 = function(startTime) {
 
     this.flyingNotesSettings = {
         9: {
-            'colors': [
-                'navy',
-                'mediumblue',
-                'royalblue',
-                'dodgerblue',
-                'deepskyblue',
-                'cornflowerblue',
-                'lightskyblue',
-                'skyblue',
-                'paleturquoise',
-            ],
+            'colors': ColorMap['fullblue'].slice(1, 10),
+
             'shapeTypes' : [
-                'tetrahedron',
-                'cube',
-                'cube',
-                'icosahedron',
-                'dodecahedron',
-                'icosahedron',
-                'cube',
-                'icosahedron',
-                'octahedron'
+                harmonicShapeMap['d'],
+                harmonicShapeMap['s'],
+                harmonicShapeMap['s'],
+                harmonicShapeMap['t'],
+                harmonicShapeMap['r'],
+                harmonicShapeMap['f'],
+                harmonicShapeMap['s'],
+                harmonicShapeMap['l'],
+                harmonicShapeMap['t'],
             ]
         },
 
         10: {
-            'colors': [
-                'darkslategray',
-                'navy',
-                'mediumblue',
-                'royalblue',
-                'dodgerblue',
-                'deepskyblue',
-                'cornflowerblue',
-                'lightskyblue',
-                'skyblue',
-                'paleturquoise',
-            ],
+            'colors': ColorMap['fullblue'],
+
             'shapeTypes' : [
-                'tetrahedron',
-                'tetrahedron',
-                'cube',
-                'cube',
-                'icosahedron',
-                'icosahedron',
-                'cube',
-                'icosahedron',
-                'icosahedron',
-                'tetrahedron'
+                harmonicShapeMap['d'],
+                harmonicShapeMap['s'],
+                harmonicShapeMap['s'],
+                harmonicShapeMap['t'],
+                harmonicShapeMap['r'],
+                harmonicShapeMap['f'],
+                harmonicShapeMap['s'],
+                harmonicShapeMap['l'],
+                harmonicShapeMap['t'],
+                harmonicShapeMap['d'],
             ]
         }
     }
@@ -293,11 +273,8 @@ var Scheduler4 = function(startTime) {
             that._shineTunnelGate()
 
             var duration = 60,
-                speed = [0, 0, 20],
-                rotation = [0.01+(flyingNoteNum-ind)*0.005,
-                            0.01+(flyingNoteNum-ind)*0.005,
-                            0.01+(flyingNoteNum-ind)*0.005];
-            that.flyingNoteList[fnListInd][ind].move(duration, speed, rotation);
+                speed = [0, 0, 20];
+            that.flyingNoteList[fnListInd][ind].moveDuration(speed, duration);
         }
 
         var delay = .6;
@@ -309,17 +286,32 @@ var Scheduler4 = function(startTime) {
                 length = 5.7*Math.pow(flyingNoteNum-i+1, 2),
                 size = 100 + (flyingNoteNum-i)*10;
 
+            var headPoly = new WoodBlock(
+                center_pos,
+                size,
+                null,
+                majorColor,
+                shapeTypes[i]
+            )
+
             var flyingNote = new FlyingNote(
+                headPoly,
                 center_pos,
                 majorColor,
                 length,
-                size,
-                shapeTypes[i]
             );
 
             flyingNote.name = "flyingNote" + fnListInd + '_' + i;
             SCENE.add(flyingNote);
             this.flyingNoteList[fnListInd].push(flyingNote);
+
+
+            headPoly.polyRotateDuration(
+                [0.01+(flyingNoteNum-i)*0.005,
+                 0.01+(flyingNoteNum-i)*0.005,
+                 0.01+(flyingNoteNum-i)*0.005],
+                60
+            );
 
             flyingNote.position.set(0,0,0);
 
@@ -368,11 +360,8 @@ var Scheduler4 = function(startTime) {
             that._shineTunnelGate()
 
             var duration = 60,
-                speed = [0, 0, 15],
-                rotation = [0.01+(flyingNoteNum-ind)*0.005,
-                            0.01+(flyingNoteNum-ind)*0.005,
-                            0.01+(flyingNoteNum-ind)*0.005];
-            that.flyingNoteList[fnListInd][ind].move(duration, speed, rotation);
+                speed = [0, 0, 15];
+            that.flyingNoteList[fnListInd][ind].moveDuration(speed, duration);
         }
 
         var delay = .8;
@@ -385,18 +374,33 @@ var Scheduler4 = function(startTime) {
                 size = 80 + (flyingNoteNum-i)*10,
                 wireWidth = 1.2;
 
+            var headPoly = new WoodBlock(
+                center_pos,
+                size,
+                null,
+                majorColor,
+                shapeTypes[i],
+                wireWidth
+            )
+
             var flyingNote = new FlyingNote(
+                headPoly,
                 center_pos,
                 majorColor,
                 length,
-                size,
-                shapeTypes[i],
-                wireWidth
             );
 
             flyingNote.name = "flyingNote" + fnListInd + "_" + i;
             SCENE.add(flyingNote);
             this.flyingNoteList[fnListInd].push(flyingNote);
+
+
+            headPoly.polyRotateDuration(
+                [0.01+(flyingNoteNum-i)*0.005,
+                 0.01+(flyingNoteNum-i)*0.005,
+                 0.01+(flyingNoteNum-i)*0.005],
+                60
+            );
 
             flyingNote.position.set(0,0,0);
 
@@ -428,43 +432,55 @@ var Scheduler4 = function(startTime) {
 
         var that = this;
 
+
         function flyingNoteAdvance(ind){
 
             that._shineTunnelGate()
 
             var duration = 60,
-                speed = [0, 0, 25],
-                rotation = [0.05, 0.05, 0.05];
-
-                rotation = [0.001+(flyingNoteNum-ind)*0.001,
-                            0.001+(flyingNoteNum-ind)*0.001,
-                            0.001+(flyingNoteNum-ind)*0.001];
-            that.flyingNoteList[fnListInd][ind].move(duration, speed, rotation);
+                speed = [0, 0, 25];
+            that.flyingNoteList[fnListInd][ind].moveDuration(speed, duration);
         }
 
         var delay = 0;
 
         for (var i = 0; i < flyingNoteNum; i++){
 
+
             var center_pos = [0, minH + (maxH-minH)*1.0/flyingNoteNum*i, -4000],
                 majorColor = colors[i],
                 length = 100,
-                size = 100 + (flyingNoteNum-i)*10;
-                wireWidth = 1.2;
+                size = 100 + (flyingNoteNum-i)*10,
+                wireWidth = 1.2,
                 trailWidth = 1;
 
+            var headPoly = new WoodBlock(
+                center_pos,
+                size,
+                null,
+                majorColor,
+                shapeTypes[i],
+                wireWidth
+            )
+
             var flyingNote = new FlyingNote(
+                headPoly,
                 center_pos,
                 majorColor,
                 length,
-                size,
-                shapeTypes[i],
-                wireWidth
+                trailWidth
             );
 
             flyingNote.name = "flyingNote" + fnListInd + "_" + i;
             SCENE.add(flyingNote);
             this.flyingNoteList[fnListInd].push(flyingNote);
+
+            headPoly.polyRotateDuration(
+                [0.001+(flyingNoteNum-i)*0.001,
+                 0.001+(flyingNoteNum-i)*0.001,
+                 0.001+(flyingNoteNum-i)*0.001],
+                60
+            );
 
             flyingNote.position.set(0,0,0);
 
@@ -479,7 +495,7 @@ var Scheduler4 = function(startTime) {
             ).call(
                 flyingNoteAdvance, [i], this, "+=0"
             ).call(
-                flyingNote.oscillate, [30, 50], flyingNote, "+=0"
+                headPoly.polyPulse, [30, 50], headPoly, "+=0"
             );
         }
 
@@ -504,13 +520,8 @@ var Scheduler4 = function(startTime) {
             that._shineTunnelGate()
 
             var duration = 60,
-                speed = [0, 0, 25],
-                rotation = [0.05, 0.05, 0.05];
-
-                rotation = [0.01+(flyingNoteNum-ind)*0.001,
-                            0.01+(flyingNoteNum-ind)*0.001,
-                            0.01+(flyingNoteNum-ind)*0.001];
-            that.flyingNoteList[fnListInd][ind].move(duration, speed, rotation);
+                speed = [0, 0, 25];
+            that.flyingNoteList[fnListInd][ind].moveDuration(speed, duration);
         }
 
         var delay = 0;
@@ -524,13 +535,21 @@ var Scheduler4 = function(startTime) {
                 wireWidth = 1.1;
                 trailWidth = 1;
 
+            var headPoly = new WoodBlock(
+                center_pos,
+                size,
+                null,
+                majorColor,
+                shapeTypes[i],
+                wireWidth
+            )
+
             var flyingNote = new FlyingNote(
+                headPoly,
                 center_pos,
                 majorColor,
                 length,
-                size,
-                shapeTypes[i],
-                wireWidth
+                trailWidth
             );
 
             flyingNote.name = "flyingNote" + fnListInd + "_" + i;
@@ -550,7 +569,7 @@ var Scheduler4 = function(startTime) {
             ).call(
                 flyingNoteAdvance, [i], this, "+=0"
             ).call(
-                flyingNote.oscillate, [30, 800], flyingNote, "+=0"
+                headPoly.polyPulse, [30, 500], headPoly, "+=0"
             );
         }
 
@@ -620,11 +639,15 @@ var Scheduler4 = function(startTime) {
 
         }
 
+        var that = this;
+
         TweenLite.to(
             CAMERA.position, 21.5, // start at 135
             {
                 onUpdate: function(){
-                    CAMERA.position.z -= 15.5;
+                    if (CAMERA.position.z >= that.finalViewZ) {
+                        CAMERA.position.z -= 15.5;
+                    }
                     // console.log(CAMERA.position);
                 },
 
@@ -645,7 +668,16 @@ var Scheduler4 = function(startTime) {
 
     this.cleanFlyingNotesTunnel = function(){
 
+        if (typeof this.flyingNoteList == "undefined"){
+            console.log("[Dispose Warning] FlyingNotes not exist");
+        }
         for (var fnListInd = 1; fnListInd <= 4; fnListInd++) {
+
+            if (typeof this.flyingNoteList[fnListInd] == "undefined"){
+                console.log("[Dispose Warning] FlyingNotes" + fnListInd +" not exist");
+                break;
+            }
+
             for (var i = 0; i < this.flyingNoteList[fnListInd].length; i++) {
                 var name = "flyingNote" + fnListInd + "_" + i;
                 var flyingNote = SCENE.getObjectByName(name);
@@ -662,62 +694,18 @@ var Scheduler4 = function(startTime) {
 
     }
 
-    this.createPlanet = function(){
-        var radius = 10,
-            wS = 20,
-            hS = 20;
-
-        var geometry = new THREE.SphereGeometry(
-                radius, wS, hS
-            );
-        var material = new THREE.MeshPhongMaterial(
-                {
-                    color: "blanchedalmond",
-                    side: THREE.DoubleSide,
-                    flatShading: true,
-                    wireframe: true,
-                }
-            );
-        var sphere = new THREE.Mesh(geometry, material);
-        sphere.position.set(
-            this.woodBlockCenterPos[0],
-            this.woodBlockCenterPos[1],
-            this.woodBlockCenterPos[2]
-        )
-        sphere.name = "sphere";
-        SCENE.add(sphere);
-
-        TweenLite.to(
-            sphere.scale, 5,
-            {
-                x: 50,
-                y: 50,
-                z: 50,
-                ease: Power4.easeIn,
-            }
-        )
-        TweenLite.to(
-            sphere.rotation, 25,
-            {
-                x: 0.001,
-            }
-        )
-
-    }
     this.beatWoodBlocks = function(){
 
-        console.log(CAMERA.position);
+        // console.log(CAMERA.position);
 
         var backGroundWave = SCENE.getObjectByName("backGroundWave");
-        if (!backGroundWave){
+        if (typeof backGroundWave == "undefined"){
             CAMERA.position.set(
                 this.finalCameraPosition[0],
                 this.finalCameraPosition[1],
-                this.finalViewZ - 100
+                this.finalViewZ
             )
         }
-
-        console.log(CAMERA.position);
 
         var center_pos = this.woodBlockCenterPos;
 
@@ -729,6 +717,8 @@ var Scheduler4 = function(startTime) {
                 size: 300*scale,
                 tri: 2,
                 majorColor: 'coral',
+                shapeType: "woodCube",
+                wireWidth: 1.5,
                 rotate: {
                     x: 0,
                     y: 0.01,
@@ -750,6 +740,8 @@ var Scheduler4 = function(startTime) {
                 size: 1000*scale,
                 tri: 2,
                 majorColor: 'mediumslateblue',
+                shapeType: "woodCube",
+                wireWidth: 1.5,
                 rotate: {
                     x: 0.005,
                     y: 0,
@@ -771,6 +763,8 @@ var Scheduler4 = function(startTime) {
                 size: 1100*scale,
                 tri: 2,
                 majorColor: 'marine',
+                shapeType: "woodCube",
+                wireWidth: 1.5,
                 rotate: {
                     x: 0,
                     y: 0,
@@ -793,13 +787,21 @@ var Scheduler4 = function(startTime) {
             var config = woodBlockSettings[name];
 
             var woodBlock = new WoodBlock(
-                config['center_pos'], config['size'], config['tri'], config['majorColor']
+                config['center_pos'], config['size'], config['tri'], config['majorColor'],
+                config['shapeType'], config['wireWidth']
             );
             woodBlock.name = name + 'WoodBlock';
 
             SCENE.add(woodBlock);
 
-            woodBlock.cubeRotate(
+            TweenLite.from(
+                woodBlock.position, .5,
+                {
+                    z: this.finalViewZ-1000
+                }
+            )
+
+            woodBlock.polyRotate(
                 config['rotate']['x'], config['rotate']['y'], config['rotate']['z'], config['rotate']['timeLapse'], config['rotate']['repeat']
             )
 
@@ -813,21 +815,66 @@ var Scheduler4 = function(startTime) {
     this.cleanBackGroundWave = function(){
         // at 160 sec
         var backGroundWave = SCENE.getObjectByName('backGroundWave');
-        var t = new TimelineLite();
-        t.call(
-            backGroundWave.changeParticleColor, [5, "black", false], backGroundWave
-        ).call(
-            function(){
-                SCENE.remove(backGroundWave);
-                disposeHierarchy(backGroundWave);
-            },
-            [],
-            backGroundWave,
-            "+=5"
-        );
+        if (typeof backGroundWave != "undefined") {
+            var t = new TimelineLite();
+            t.call(
+                backGroundWave.changeParticleColor, [12, "black", false], backGroundWave
+            ).call(
+                function(){
+                    SCENE.remove(backGroundWave);
+                    disposeHierarchy(backGroundWave);
+                },
+                [],
+                backGroundWave,
+                "+=12"
+            );
+        }
     }
 
-    this.rushWoodBlockCenter = function(){
+    this.createPlanets = function(){
+
+        var planetNum = 2;
+
+        for (var i = 0; i < planetNum; i++) {
+
+            var center_pos = this.woodBlockCenterPos,
+                radius = 10,
+                tri = 12,
+                majorColor = "blanchedalmond",
+                shapeType = "sphere",
+                wireWidth = 2;
+
+            var planet = new WoodBlock(
+                center_pos,
+                radius,
+                tri,
+                majorColor,
+                shapeType,
+                wireWidth
+            );
+
+            planet.name = "planet" + i;
+            SCENE.add(planet);
+
+            planet.polyRotateDuration([0, 0.005, 0], 25);
+            // planet.polyPulseDuration(.08, .1, 20, 25);
+
+            var finalScale = 1000.0*3/radius;
+            TweenLite.to(
+                planet.poly.scale, 5,
+                {
+                    x: finalScale,
+                    y: finalScale,
+                    z: finalScale,
+                    ease: Power4.easeIn,
+                    delay: 1.4*i,
+                }
+            )
+
+        }
+    }
+
+    this.rushWoodBlockCenterAndReset = function(){
         // at 70 + 87 = 157 sec
 
         TweenLite.to(
@@ -839,14 +886,32 @@ var Scheduler4 = function(startTime) {
                 ease: Power1.easeIn,
                 onComplete: function(){
 
-                    var names = ["smallWoodBlock", "bigWoodBlock", "hugeWoodBlock", "sphere"];
+                    var names = ["smallWoodBlock", "bigWoodBlock", "hugeWoodBlock"];
+                    for (var i = 0; i < 2; i++){
+                        names.push("planet"+i);
+                    }
                     for (var i = 0; i < names.length; i++){
                         var obj = SCENE.getObjectByName(names[i]);
                         if (obj) {
-                            SCENE.remove(obj);
-                            disposeHierarchy(obj);
+                            var t = new TimelineLite();
+                            t.call(
+                                obj.changeColor,
+                                [.5, "oldlace", false],
+                                obj
+                            ).call(
+                                function(){
+                                    SCENE.remove(obj);
+                                    disposeHierarchy(obj);
+                                },
+                                [],
+                                this,
+                                "+=1"
+                            )
                         }
                     }
+
+                    SCENE.background = new THREE.Color("oldlace");
+                    console.log('A Whole New World!')
                 }
             }
         )

@@ -73,94 +73,18 @@ SoundWave.prototype.resetTime = function(){
 }
 
 SoundWave.prototype.pulseParticle = function(totalTime, minSize, maxSize, finalColor, cycle) {
-    this.changeParticleColor(
-        totalTime, finalColor, cycle
-    );
-
-    this.changeParticleSize(
-        totalTime, minSize, maxSize, cycle
-    );
+    this.changeParticleColor(totalTime, finalColor, cycle);
+    this.changeParticleSize(totalTime, minSize, maxSize, cycle);
 }
 
 SoundWave.prototype.changeParticleColor = function(totalTime, finalColor, cycle){
-    var that = this;
-    cycle = setdefault(cycle, true);
+    changeMaterialColor(this, 'particles', totalTime, finalColor, cycle);
 
-    function changeColor(){
-        var material = that.particles.material;
-        material.color.r = that.color3.r;
-        material.color.g = that.color3.g;
-        material.color.b = that.color3.b;
-        material.needsUpdate = true;
-    }
-
-    var oriColor3 = this.color3.clone();
-    var finalColor3 = new THREE.Color(finalColor);
-
-    var t = new TimelineLite({paused: true});
-    var duration = cycle?totalTime/2.0:totalTime;
-
-    TweenLite.killTweensOf(that.color3);
-
-    t = t.to(
-        that.color3, duration,
-        {
-            r: finalColor3.r,
-            g: finalColor3.g,
-            b: finalColor3.b,
-            onUpdate: changeColor,
-        }
-    )
-
-    if (cycle){
-        t = t.to(
-            that.color3, duration,
-            {
-                r: oriColor3.r,
-                g: oriColor3.g,
-                b: oriColor3.b,
-                onUpdate: changeColor,
-            }
-        )
-    }
-    t.play();
 }
 
 SoundWave.prototype.changeParticleSize = function(totalTime, minSize, maxSize, cycle){
-    var that = this;
-    cycle = setdefault(cycle, true);
+    changePointMaterialSize(this, 'particles', totalTime, minSize, maxSize, cycle);
 
-    function changeSize(){
-
-        var material = that.particles.material;
-        material.size = that.size;
-        material.needsUpdate = true;
-
-    }
-    var t = new TimelineLite({paused: true});
-
-    var duration = cycle?totalTime/2.0:totalTime;
-
-    TweenLite.killTweensOf(that.size);
-
-    t = t.to(
-        that, duration,
-        {
-            size: maxSize,
-            onUpdate: changeSize,
-        }
-    )
-
-    if (cycle){
-        t = t.to(
-            that, duration,
-            {
-                size: minSize,
-                onUpdate: changeSize,
-            }
-        )
-    }
-    t.play();
 }
 
 SoundWave.prototype.setRandomMovement = function(totalTime, delaySpeed, magnitude, t_scale, timeLine) {
