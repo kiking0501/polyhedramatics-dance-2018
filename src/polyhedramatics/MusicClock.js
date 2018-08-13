@@ -15,7 +15,8 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
             'edgeWidth': 1,
         },
         'shine': {
-            'edgeColor': ColorMap[majorColor][0],
+            'edgeColor': setdefault(this.customSettings['shineEdgeColor'],
+                                    ColorMap[majorColor][0]),
             'edgeWidth': 10,
         }
     }

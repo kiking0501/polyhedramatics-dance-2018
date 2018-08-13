@@ -43,12 +43,12 @@ var Scheduler4 = function(startTime) {
 
     ]
 
-    this.finalCameraPosition = [-400, 6.12, -6665]; //final after rotateCamera
-    this.finalViewZ = -18000;
+    this.finalCameraPosition = [-800, 0, -6665]; //final after rotateCamera
+    this.finalViewZ = -16000;
 
     this.woodBlockCenterPos = [
          this.finalCameraPosition[0],  this.finalCameraPosition[1],
-        -15000
+        -12000
     ];
 
     this._shineTunnel = function(totalTime, minSize, maxSize, layerDelay){
@@ -81,14 +81,15 @@ var Scheduler4 = function(startTime) {
         // SCENE.fog.far = 4000;
 
         var angle = Math.PI + Math.PI/2/2;
+
         var dist = 2000;
-        var center_pos = [0, Math.cos(angle), -dist + dist* Math.sin(angle)],
-            xNum = 50,
-            yNum = 50,
+        var center_pos = [2000, Math.cos(angle),  -dist/1.8 + dist* Math.sin(angle)],
+            xNum = 20,
+            yNum = 40,
             zNum = 30,
             majorColor = 'royalblue',
             size = 30,
-            dist = 300,
+            dist = 400,
             isLattice = true;
 
         var backGroundWave = new SoundWave(
@@ -107,7 +108,7 @@ var Scheduler4 = function(startTime) {
 
         var totalTime = 50,
             delaySpeed = 0.1,
-            magnitude = 100,
+            magnitude = 50,
             t_scale = 1,
             timeLine = new TimelineLite({pause:true});
 
@@ -138,12 +139,12 @@ var Scheduler4 = function(startTime) {
 
     this.showSoundWave = function(){
         // at 96sec
-        var center_pos = [-2000,0,-2000],
-            xNum = 60,
-            yNum = 60,
+        var center_pos = [-5000,0, 1000],
+            xNum = 15,
+            yNum = 15,
             zNum = 5,
             majorColor = 'black',
-            size = 50,
+            size = 30,
             dist = 1000;
 
         var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
@@ -164,28 +165,28 @@ var Scheduler4 = function(startTime) {
             dimColor = "black";
 
         pulseT.call(
-            soundWave.pulseParticle, [4.5, 50, 50, shineColors[0], false], soundWave, "0" // 96 to 99
+            soundWave.pulseParticle, [4.5, 30, 30, shineColors[0], false], soundWave, "0" // 96 to 99
         )
         .call(
-            soundWave.pulseParticle, [2, 50, 40, dimColor, false], soundWave, "3"
+            soundWave.pulseParticle, [2, 30, 15, dimColor, false], soundWave, "3"
         )
         .call(
-            soundWave.pulseParticle, [4, 40, 50, shineColors[1], false], soundWave, "4" // 100 to 104
+            soundWave.pulseParticle, [4, 15, 30, shineColors[1], false], soundWave, "4" // 100 to 104
         )
         .call(
-            soundWave.pulseParticle, [10, 50, 40, dimColor, false], soundWave, "8" // 104 to 114
+            soundWave.pulseParticle, [10, 30, 15, dimColor, false], soundWave, "8" // 104 to 114
         )
         .call(
-            soundWave.pulseParticle, [8, 50, 40, shineColors[0], false], soundWave, "10" // 108 to 114
+            soundWave.pulseParticle, [8, 15, 30, shineColors[0], false], soundWave, "10" // 108 to 114
         )
         .call(
-            soundWave.pulseParticle, [8, 40, 50, shineColors[1]], soundWave, "18", // 114-118-122, shine at 18, 1
+            soundWave.pulseParticle, [8, 15, 30, shineColors[1]], soundWave, "18", // 114-118-122, shine at 18, 1
         )
         .call(
-            soundWave.pulseParticle, [10, 40, 50, shineColors[0], false], soundWave, "26"// 122 to ~
+            soundWave.pulseParticle, [10, 15, 30, shineColors[0], false], soundWave, "26"// 122 to ~
         )
         .call(
-            soundWave.pulseParticle, [2, 50, 40, dimColor, false], soundWave, "29"
+            soundWave.pulseParticle, [2, 30, 15, dimColor, false], soundWave, "29"
         )
         .call(
             function(){SCENE.remove(soundWave); disposeHierarchy(soundWave);}
@@ -320,7 +321,7 @@ var Scheduler4 = function(startTime) {
                 flyingNote.position, (this.MID - this.START),
                 {
                     delay: delay*i,
-                    z: -10000,
+                    z: -8000,
                     ease: Bounce.easeIn
                 }
             ).call(
@@ -409,7 +410,7 @@ var Scheduler4 = function(startTime) {
                 flyingNote.position, (this.MID - this.START) ,
                 {
                     delay: delay*i,
-                    z: -10000,
+                    z: -15000,
                 }
             ).call(
                 flyingNoteAdvance, [i], this, "+=0"
@@ -452,7 +453,7 @@ var Scheduler4 = function(startTime) {
                 length = 100,
                 size = 100 + (flyingNoteNum-i)*10,
                 wireWidth = 1.2,
-                trailWidth = 1;
+                trailWidth = 8;
 
             var headPoly = new WoodBlock(
                 center_pos,
@@ -489,7 +490,7 @@ var Scheduler4 = function(startTime) {
                 flyingNote.position, (this.MID - this.START) ,
                 {
                     delay: delay*i,
-                    z: -10000,
+                    z: -8000,
                     ease: Bounce.easeIn
                 }
             ).call(
@@ -533,7 +534,7 @@ var Scheduler4 = function(startTime) {
                 length = 100,
                 size = 300 + (flyingNoteNum-i)*10;
                 wireWidth = 1.1;
-                trailWidth = 1;
+                trailWidth = 8;
 
             var headPoly = new WoodBlock(
                 center_pos,
@@ -563,7 +564,7 @@ var Scheduler4 = function(startTime) {
                 flyingNote.position, (this.MID - this.START) ,
                 {
                     delay: delay*i,
-                    z: -10000,
+                    z: -8000,
                     ease: Bounce.easeIn
                 }
             ).call(
@@ -580,26 +581,25 @@ var Scheduler4 = function(startTime) {
         var that = this;
 
         TweenLite.to(
-            CAMERA.rotation, 19.5, //start at 115 sec
+            CAMERA.rotation, 20.5,
             {
-                y: (Math.PI),
-                onUpdate: function(){
-                    // CAMERA.rotation.y += 0.001;
-                    CAMERA.position.x -= 9;
-                    CAMERA.position.z -= 15;
-                },
-                ease: Power0.easeOut,
-                onComplete: function(){
-                    TweenLite.to(
-                        CAMERA.position, 1, {
-                            x: that.finalCameraPosition[0],
-                            y: that.finalCameraPosition[1],
-                            z: that.finalCameraPosition[2],
-                        }
-                    );
-                }
+                y: Math.PI,
+                ease: Power0.easeIn,
             }
+        )
 
+        // End at Schduler 3
+        // CAMERA position at [4500, 0, 1000]
+        // CAMERA rotation [0, Math.PI/2, 0]
+
+        TweenLite.to(
+            CAMERA.position, 20.5,
+            {
+                x: that.finalCameraPosition[0],
+                y: that.finalCameraPosition[1],
+                z: that.finalCameraPosition[2],
+                ease: Power0.easeOut,
+            }
         )
 
     }
@@ -644,22 +644,8 @@ var Scheduler4 = function(startTime) {
         TweenLite.to(
             CAMERA.position, 21.5, // start at 135
             {
-                onUpdate: function(){
-                    if (CAMERA.position.z >= that.finalViewZ) {
-                        CAMERA.position.z -= 15.5;
-                    }
-                    // console.log(CAMERA.position);
-                },
-
-                onComplete: function(){ //156.5 to 157
-                    TweenLite.to(
-                        CAMERA.position, .5,
-                        {
-                            z: this.finalViewZ,
-                            ease: Linear.easeNone,
-                        }
-                    );
-                }
+                z: this.finalViewZ,
+                ease: Power2.EaseIn,
             }
         );
 
@@ -818,7 +804,7 @@ var Scheduler4 = function(startTime) {
         if (typeof backGroundWave != "undefined") {
             var t = new TimelineLite();
             t.call(
-                backGroundWave.changeParticleColor, [12, "black", false], backGroundWave
+                backGroundWave.changeParticleColor, [12.5, "black", false], backGroundWave
             ).call(
                 function(){
                     SCENE.remove(backGroundWave);
@@ -826,7 +812,7 @@ var Scheduler4 = function(startTime) {
                 },
                 [],
                 backGroundWave,
-                "+=12"
+                "+=12.5"
             );
         }
     }
@@ -860,6 +846,13 @@ var Scheduler4 = function(startTime) {
                 planet.polyRotateDuration([0, 0.005, 0], 25);
             }
 
+            TweenLite.from(
+                planet.position, .5,
+                {
+                    z: this.finalViewZ-1000
+                }
+            )
+
             var finalScale = 1000.0*3/radius;
             TweenLite.to(
                 planet.poly.scale, 5,
@@ -889,9 +882,9 @@ var Scheduler4 = function(startTime) {
 
                     var names = ["smallWoodBlock", "bigWoodBlock", "hugeWoodBlock"];
                     for (var i = 0; i < 2; i++){
-                        names.push("planet"+i);
+                        names.push( "planet" + i );
                     }
-                    for (var i = 0; i < names.length; i++){
+                    for (var i = names.length-1; i > 0; i--){
                         var obj = SCENE.getObjectByName(names[i]);
                         if (obj) {
                             var t = new TimelineLite();
@@ -900,11 +893,11 @@ var Scheduler4 = function(startTime) {
                                 [.5, "oldlace", false],
                                 obj
                             ).call(
-                                function(){
-                                    SCENE.remove(obj);
-                                    disposeHierarchy(obj);
+                                function(Obj){
+                                    SCENE.remove(Obj);
+                                    disposeHierarchy(Obj);
                                 },
-                                [],
+                                [obj],
                                 this,
                                 "+=1"
                             )

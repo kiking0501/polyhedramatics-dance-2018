@@ -13,10 +13,11 @@ var Scheduler5 = function(startTime) {
         'moveMusicClock',
         'moveCamera',
         'createSpiral',
-        // 'earthMelody',
-        'expandShadow',
-        'randomExplore',
-        'showSoundWave',
+        'createPolyhedra',
+        'expandShadows',
+        'earthMelody',
+        // 'randomExplore',
+        // 'showSoundWave',
     ]
 
     this.startSecond = [
@@ -27,15 +28,16 @@ var Scheduler5 = function(startTime) {
         this.START-0.5-0.1, //moveMusicClock
         this.START-0.5-0.1, //moveCamera
         this.START-0.5-0.1, //createSpiral
-        // this.START + 8, // earthMelody
+        this.START + 8, // createPolyhedra
         this.START + 12, // expandShadow
+        this.START + 8, // earthMelody
         this.START + 15-0.5, //randomExplore //21
         this.START + 25,
     ]
 
     this.musicClockR = 10;
     this.oriCameraPosition = [0, -this.musicClockR*.4 + 10, this.musicClockR * 1.4];
-    this.finalY = 100;
+    this.finalY = 80;
 
     this.initCameraPosition = function(){
         SCENE.background = new THREE.Color("oldlace");
@@ -45,6 +47,7 @@ var Scheduler5 = function(startTime) {
             this.oriCameraPosition[1],
             this.oriCameraPosition[2]
         );
+
         CAMERA.rotation.set(0, 0, 0);
         TweenLite.from(
             CAMERA.position, 1.2,
@@ -70,10 +73,18 @@ var Scheduler5 = function(startTime) {
             {
                 'dimEdgeColor': ColorMap['grey'][2],
                 'shineNodeColor': 'greenyellow',
+                'shineEdgeColor': 'greenyellow',
             }
         );
         musicClock.position.set(center_pos[0], center_pos[1], center_pos[2])
-        musicClock.rotation.x = -Math.PI/2;
+
+        TweenLite.to(
+            musicClock.rotation, 3.5, {
+                x: -Math.PI/2,
+                ease: Power4.easeIn,
+            }
+        )
+        // musicClock.rotation.x = -Math.PI/2;
         musicClock.name = 'musicClock';
         SCENE.add(musicClock);
 
@@ -163,7 +174,7 @@ var Scheduler5 = function(startTime) {
 
         var offsetY = 5;
 
-        var size = 1,
+        var size = 1.5,
             tri = 2,
             shapeType = "dodecahedron",
             wireWidth = 1.3;
@@ -176,15 +187,14 @@ var Scheduler5 = function(startTime) {
                 shapeType,
                 wireWidth
         );
-        headPoly.polyPulseDuration(.1, .01, 1,
-                                   15)
+        // headPoly.polyPulseDuration(1, .001, 5, 15)
         headPoly.polyRotateDuration([0.001, 0.001, 0.001],
                                    30);
 
         var jumpyNote = new FlyingNote(
             headPoly,
             center_pos,
-            majorColor,
+            "dodgerblue",
             length,
             trailWidth,
             trailBlending
@@ -303,11 +313,11 @@ var Scheduler5 = function(startTime) {
         )
 
         var t2 = TweenLite.delayedCall(
-            12,
+            9,
             function (){
                 t.kill();
                 TweenLite.to(
-                    CAMERA.position, 13,
+                    CAMERA.position, 16,
                     {
                         z: 100,
                         ease: Power0.LinearIn,
@@ -331,6 +341,25 @@ var Scheduler5 = function(startTime) {
                         onComplete: function(){
                             SCENE.background = new THREE.Color("black")
                         }
+                    }
+                )
+            },
+            [],
+            this
+        )
+
+        var black = new THREE.Color("black");
+        var t4 = TweenLite.delayedCall(
+            24,
+            function (){
+
+                TweenLite.to(
+                    SCENE.background, 1,
+                    {
+                        r: black.r,
+                        g: black.g,
+                        b: black.b
+                        // ease: Back.easeOut
                     }
                 )
             },
@@ -393,13 +422,71 @@ var Scheduler5 = function(startTime) {
         )
 
     }
+    this.createPolyhedra = function(){
+
+        var minZ = -200, maxZ = -100,
+            minX = -10, maxX = 10,
+            minY = -10, maxY = 10,
+            minSize = 100, maxSize = 300;
+
+        var polyNum = 10;
+        var shapeTypes = ['tetrahedron', 'dodecahedron', 'octahedron', 'icosahedron', 'cube'];
+        for (var i = 0; i < polyNum; i++) {
+            var center_pos = [
+                Math.random() * (maxX - minX) + minX,
+                Math.random() * (maxY - minY) + minY,
+                -10 //Math.random() * (maxZ - minZ) + minZ,
+            ];
+            var size = Math.random() * (maxSize - minSize) + minSize;
+            var tri = 3;
+            var majorColor = ColorMap['fullblue'][Math.round(Math.random()*8)];
+            var shapeType = shapeTypes[Math.round(Math.random()*4)];
+
+            var polyhedron = new WoodBlock(
+                center_pos, 3, tri, majorColor, shapeType
+            )
+            polyhedron.name = "polyhedron" + i;
+            SCENE.add(polyhedron);
+
+            TweenLite.to(
+                polyhedron.scale, 17,
+                {
+                    x: size,
+                    y: size,
+                    z: size,
+                    ease: Power4.easeIn,
+                }
+            )
+            console.log(polyhedron);
+        }
+
+    }
+
+    this.expandShadows = function(){
+
+        for (var i = 0; i < this.soloConfigs['melody'].length; i++){
+            var shadow = SCENE.getObjectByName('shadow' + i);
+            TweenLite.to(
+                shadow.poly.scale, 9,
+                {
+                    x: 6,
+                    y: 6,
+                    z: 6,
+                }
+
+            )
+        }
+
+    }
 
     this.earthMelody = function(){
 
-        var size = .5,
-            color = 'darkgreen',
-            pos = [0, 35, 14
-                  ];
+        var size = 1,
+            color = 'blue',
+            // sepr = 50,
+            // layer = 30,
+            // withEdge = false,
+            pos = [-1000, 0, -2000];
 
         console.log(CAMERA.position);
         console.log(pos);
@@ -408,7 +495,7 @@ var Scheduler5 = function(startTime) {
             150*size, 150*size, 500*size, color
         );
 
-        var notes = ['l1', 's1', 'd', 't', 'r'];
+        var notes = ['l1', 's1', 'd2', 't1', 'r2'];
         var melody = [];
         for (var i = 0; i < notes.length; i++) {melody.push({'note': notes[i]});}
 
@@ -422,32 +509,17 @@ var Scheduler5 = function(startTime) {
         earthMelody.name = "earthMelody";
 
         earthMelody.scale.set(size, size, size);
-        earthMelody.rotation.x = Math.PI;
-        earthMelody.rotation.y = Math.PI/2;
+        // earthMelody.rotation.x = Math.PI;
+        // earthMelody.rotation.y = Math.PI/2;
 
 
         SCENE.add(earthMelody);
 
     }
-    this.expandShadow = function(){
 
-        for (var i = 0; i < this.soloConfigs['melody'].length; i++){
-            var shadow = SCENE.getObjectByName('shadow' + i);
-            TweenLite.to(
-                shadow.poly.scale, 10,
-                {
-                    x: 5,
-                    y: 5,
-                    z: 5,
-                }
-
-            )
-        }
-
-    }
 
     this.randomExplore = function(){
-        console.log(CAMERA.position);
+
         var colors = [];
         var colorTypes = ['marine', 'lightblue', 'yellow'];
         for (var c = 0; c < colorTypes.length; c++){
@@ -496,13 +568,12 @@ var Scheduler5 = function(startTime) {
     this.showSoundWave = function(){
         // play at 45 sec
         var center_pos = [0,0,-1000],
-            xNum = 60,
-            yNum = 60,
+            xNum = 30,
+            yNum = 30,
             zNum = 5,
             majorColor = 'mediumblue',
-            size = 30,
-            // dist = 500;
-            dist = 500;
+            size = 50,
+            dist = 800;
 
         var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
         soundWave.name = 'highPitchSoundWave';
@@ -520,11 +591,11 @@ var Scheduler5 = function(startTime) {
             dimColor = "mediumblue";
 
         pulseT.call(
-            soundWave.pulseParticle, [8, 30, 30, shineColor, true], soundWave, "0"
+            soundWave.pulseParticle, [8, 50, 50, shineColor, true], soundWave, "0"
         ).call(
-            soundWave.pulseParticle, [8.5, 30, 30, shineColor, true], soundWave, "21" // shine at +25, 210sec
+            soundWave.pulseParticle, [8.5, 50, 50, shineColor, true], soundWave, "21" // shine at +25, 210sec
         ).call(
-            soundWave.pulseParticle, [5, 30, 30, shineColor, false], soundWave, "40" // shine end at 230sec
+            soundWave.pulseParticle, [5, 50, 50, shineColor, false], soundWave, "40" // shine end at 230sec
         )
         pulseT.play();
 

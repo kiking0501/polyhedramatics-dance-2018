@@ -136,12 +136,12 @@ var Scheduler3 = function(startTime) {
 
     this.showSoundWave = function(){
         // play at 45 sec
-        var center_pos = [0,0,-1000],
-            xNum = 100,
-            yNum = 100,
+        var center_pos = [0,0,-2000],
+            xNum = 30,
+            yNum = 30,
             zNum = 5,
             majorColor = 'black',
-            size = 10,
+            size = 30,
             // dist = 500;
             dist = 800;
 
@@ -161,9 +161,9 @@ var Scheduler3 = function(startTime) {
             dimColor = "black";
 
         pulseT.call(
-            soundWave.pulseParticle, [4.5, 20, 20, shineColor, false], soundWave, "0"
+            soundWave.pulseParticle, [4.5, 30, 30, shineColor, false], soundWave, "0"
         ).call(
-            soundWave.pulseParticle, [5.5, 20, 20, dimColor, false], soundWave, "6.5"
+            soundWave.pulseParticle, [5.5, 30, 30, dimColor, false], soundWave, "6.5"
         ).call(
             function(){SCENE.remove(soundWave); disposeHierarchy(soundWave);}
         )
@@ -643,31 +643,27 @@ var Scheduler3 = function(startTime) {
 
         var t = new TimelineLite({paused: true});
 
-        t.to(
-            CAMERA.rotation, 6,
-            {
-                delay:.0, // start at 69 sec
-                onUpdate: function(){
-                    CAMERA.rotation.y+=0.001;
-                    CAMERA.position.x+=0.001;
-                }
-            }
-        ).to(
-            CAMERA.rotation, 35, //start at 75 sec
+        TweenLite.to(
+            CAMERA.rotation, 41,
             {
                 y: (Math.PI)/2,
-                onUpdate: function(){
-                    // CAMERA.rotation.y += 0.001;
-                    CAMERA.position.x += 0.001;
-                },
                 ease: Power2.easeOut,
             }
 
-        ).call(function(){
+        )
 
-        });
 
-        t.play();
+        TweenLite.to(
+            CAMERA.position, 41,
+            {
+                x: 4500,
+                ease: Power4.easeOut,
+            }
+
+        )
+
+        // CAMERA position at [4500, 0, 1000]
+        // CAMERA rotation [0, Math.PI/2, 0]
     }
 
 }

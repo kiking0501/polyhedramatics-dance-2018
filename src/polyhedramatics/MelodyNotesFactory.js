@@ -134,12 +134,12 @@ MelodyNotesFactory.prototype.createNode = function(pos, color, r, sep, note5Num,
     }
 
     var noteGroup = new THREE.Group();
-    sep = setdefault(sep, 50 *  this.nodeScale);
+    sep = setdefault(sep, 50);
     onlyDots = setdefault(onlyDots, false);
 
-    var lineWidth = 1 *  this.nodeScale,
+    var lineWidth = 1,
         segNum = 5,
-        dotSize = 3 * this.nodeScale;
+        dotSize = 3;
 
     var note3Num = 0;
 

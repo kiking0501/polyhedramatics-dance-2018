@@ -1,6 +1,7 @@
 var SoundWave = function(center_pos, xNum, yNum, zNum, majorColor, size, dist, isLattice){
     // if center_pos = (0, 0, 0),
     // then span: [-xNum/2, xNum/2] * [-yNum/2, yNum/2] * [0, -zNum]
+    // impt: recommand numbers to be 30x30x5, otherwise will be very lag when recording
 
     THREE.Group.apply(this, arguments);
 
