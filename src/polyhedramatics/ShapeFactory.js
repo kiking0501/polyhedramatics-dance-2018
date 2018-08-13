@@ -27,7 +27,7 @@ ShapeFactory.prototype.addShape = function(shapeType, extrudeSettings, texture) 
                var geometry = new THREE.ShapeBufferGeometry( this.shape );
                var mesh = new THREE.Mesh(
                     geometry,
-                    new THREE.MeshPhongMaterial({
+                    new THREE.MeshBasicMaterial({
                          color: this.color,
                          side: THREE.DoubleSide
                     }))
@@ -39,7 +39,7 @@ ShapeFactory.prototype.addShape = function(shapeType, extrudeSettings, texture) 
                var geometry = new THREE.ExtrudeGeometry( this.shape, extrudeSettings);
                var mesh = new THREE.Mesh(
                     geometry,
-                    new THREE.MeshPhongMaterial({
+                    new THREE.MeshBasicMaterial({
                          color: this.color,
                     })
                )

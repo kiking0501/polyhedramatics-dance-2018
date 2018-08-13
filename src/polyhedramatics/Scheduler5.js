@@ -13,6 +13,7 @@ var Scheduler5 = function(startTime) {
         'moveMusicClock',
         'moveCamera',
         'createSpiral',
+        // 'earthMelody',
         'expandShadow',
         'randomExplore',
         'showSoundWave',
@@ -26,6 +27,7 @@ var Scheduler5 = function(startTime) {
         this.START-0.5-0.1, //moveMusicClock
         this.START-0.5-0.1, //moveCamera
         this.START-0.5-0.1, //createSpiral
+        // this.START + 8, // earthMelody
         this.START + 12, // expandShadow
         this.START + 15-0.5, //randomExplore //21
         this.START + 25,
@@ -67,6 +69,7 @@ var Scheduler5 = function(startTime) {
             center_pos, radius, startAngle, majorColor,
             {
                 'dimEdgeColor': ColorMap['grey'][2],
+                'shineNodeColor': 'greenyellow',
             }
         );
         musicClock.position.set(center_pos[0], center_pos[1], center_pos[2])
@@ -349,7 +352,7 @@ var Scheduler5 = function(startTime) {
         var center_pos = [dist*Math.cos(0), 0, dist*Math.sin(0)],
             majorColor = 'lightcyan',
             length = 2000,
-            trailWidth = .1,
+            trailWidth = .2,
             trailBlending = THREE.MultiplyBlending;
 
         var headPoly = new THREE.Group();
@@ -391,6 +394,41 @@ var Scheduler5 = function(startTime) {
 
     }
 
+    this.earthMelody = function(){
+
+        var size = .5,
+            color = 'darkgreen',
+            pos = [0, 35, 14
+                  ];
+
+        console.log(CAMERA.position);
+        console.log(pos);
+
+        var MNF = new MelodyNotesFactory(
+            150*size, 150*size, 500*size, color
+        );
+
+        var notes = ['l1', 's1', 'd', 't', 'r'];
+        var melody = [];
+        for (var i = 0; i < notes.length; i++) {melody.push({'note': notes[i]});}
+
+        var earthMelody = MNF.createMelody(
+            melody,
+            [0, 0, 0],
+            null,
+            false
+        )
+        earthMelody = MNF.setMelodyNotesPosition(earthMelody, pos);
+        earthMelody.name = "earthMelody";
+
+        earthMelody.scale.set(size, size, size);
+        earthMelody.rotation.x = Math.PI;
+        earthMelody.rotation.y = Math.PI/2;
+
+
+        SCENE.add(earthMelody);
+
+    }
     this.expandShadow = function(){
 
         for (var i = 0; i < this.soloConfigs['melody'].length; i++){
@@ -409,7 +447,7 @@ var Scheduler5 = function(startTime) {
     }
 
     this.randomExplore = function(){
-
+        console.log(CAMERA.position);
         var colors = [];
         var colorTypes = ['marine', 'lightblue', 'yellow'];
         for (var c = 0; c < colorTypes.length; c++){
@@ -458,8 +496,8 @@ var Scheduler5 = function(startTime) {
     this.showSoundWave = function(){
         // play at 45 sec
         var center_pos = [0,0,-1000],
-            xNum = 100,
-            yNum = 100,
+            xNum = 60,
+            yNum = 60,
             zNum = 5,
             majorColor = 'mediumblue',
             size = 30,

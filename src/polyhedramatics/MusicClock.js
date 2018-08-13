@@ -10,11 +10,11 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
     this.settings = {
         'dim': {
             'nodeRadius': this.r / 25,
-            'edgeColor': setdefault(this.customSettings['dimEdgeColor'],                    ColorMap['grey'][7]),
+            'edgeColor': setdefault(this.customSettings['dimEdgeColor'],
+                                    ColorMap['grey'][7]),
             'edgeWidth': 1,
         },
         'shine': {
-            'nodeColor': majorColor,
             'edgeColor': ColorMap[majorColor][0],
             'edgeWidth': 10,
         }
@@ -72,6 +72,19 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
         }
     }
     this.settings['dim']['nodeColor'] = colors;
+
+    this.settings['shine']['nodeColor'] = [];
+    for (var i = 0; i < this.vertices.length; i++) {
+        if ("shineNodeColor" in this.customSettings){
+            this.settings['shine']['nodeColor'].push(this.customSettings['shineNodeColor']);
+        } else {
+            this.settings['shine']['nodeColor'].push(
+                ColorMap[majorColor][Math.round(i) % ColorMap[majorColor].length]
+            )
+        }
+    }
+
+
     for (var i = 0; i < this.vertices.length; i++) {
         var node = this.createNode(
             this.vertices[i],
@@ -197,8 +210,7 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay){
     t = setdefault(t, new TimelineLite());
     beforeDelay = setdefault(beforeDelay, 0);
 
-    var shineColor = ColorMap[this.settings['shine']['nodeColor']][
-                                node_ind % ColorMap[this.settings['shine']['nodeColor']].length];
+    var shineColor = this.settings['shine']['nodeColor'][node_ind];
 
     var dimColor = this.settings['dim']['nodeColor'][node_ind];
 
@@ -211,6 +223,7 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay){
     function keepDimColor() {
         that.nodes[node_ind].material.color = new THREE.Color(dimColor);
     }
+
 
     t.set(this.nodes[node_ind].material,
           {color: new THREE.Color(shineColor)})

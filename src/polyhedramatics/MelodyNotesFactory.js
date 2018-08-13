@@ -5,6 +5,7 @@ var MelodyNotesFactory = function(nodeRadius, toNextSemiToneHeight, toNextNoteDi
     this.H = toNextSemiToneHeight;
     this.D = toNextNoteDistance;
     this.majorColor = majorColor;
+    this.nodeScale = nodeRadius / 150.0;
 
     this.scale = ['d', 'r', 'm', 'f', 's', 'l', 't']
     this.noteMap = {
@@ -133,19 +134,26 @@ MelodyNotesFactory.prototype.createNode = function(pos, color, r, sep, note5Num,
     }
 
     var noteGroup = new THREE.Group();
-    sep = setdefault(sep, 50);
+    sep = setdefault(sep, 50 *  this.nodeScale);
     onlyDots = setdefault(onlyDots, false);
 
-    var lineWidth = 1,
+    var lineWidth = 1 *  this.nodeScale,
         segNum = 5,
-        dotSize = 3;
+        dotSize = 3 * this.nodeScale;
 
     var note3Num = 0;
 
     if (!onlyDots){
-        var note1 = shapeFactory.addShape(
-            "extrude", extrudeSettings
-        )
+
+        if (r > 100) {
+            var note1 = shapeFactory.addShape(
+                "extrude", extrudeSettings
+            )
+        } else {
+            var note1 = shapeFactory.addShape(
+                "flat"
+            )
+        }
         note1.position.z = pos[2];
         noteGroup.add(note1);
 

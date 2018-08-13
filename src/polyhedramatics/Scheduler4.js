@@ -139,8 +139,8 @@ var Scheduler4 = function(startTime) {
     this.showSoundWave = function(){
         // at 96sec
         var center_pos = [-2000,0,-2000],
-            xNum = 100,
-            yNum = 100,
+            xNum = 60,
+            yNum = 60,
             zNum = 5,
             majorColor = 'black',
             size = 50,
@@ -856,8 +856,9 @@ var Scheduler4 = function(startTime) {
             planet.name = "planet" + i;
             SCENE.add(planet);
 
-            planet.polyRotateDuration([0, 0.005, 0], 25);
-            // planet.polyPulseDuration(.08, .1, 20, 25);
+            if (i == 0){
+                planet.polyRotateDuration([0, 0.005, 0], 25);
+            }
 
             var finalScale = 1000.0*3/radius;
             TweenLite.to(
