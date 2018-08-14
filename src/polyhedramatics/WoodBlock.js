@@ -290,8 +290,7 @@ WoodBlock.prototype.polyRotateDuration = function(rotation, duration) {
         that.poly.geometry.verticesNeedUpdate = true;
     }
 
-    // need TweenMax (instead of TweenLite) to use repeat
-    TweenMax.to(
+    TweenLite.to(
         this.poly, duration,
         {
             onUpdate: updatePoly,
@@ -308,4 +307,25 @@ var harmonicShapeMap = {
     's': 'cube', //3, 6, 12
     'l': 'icosahedron',
     't': 'icosahedron1' // 15
+}
+
+WoodBlock.prototype.polyExpand = function(scale, duration) {
+
+    var that = this;
+    function updatePoly(){
+        that.poly.geometry.verticesNeedUpdate = true;
+        console.log(that.poly.geometry.scale);
+    }
+
+    TweenLite.to(
+        this.poly.geometry.scale, duration,
+        {
+            x: scale,
+            y: scale,
+            z: scale,
+            onUpdate: updatePoly,
+        }
+    )
+
+
 }

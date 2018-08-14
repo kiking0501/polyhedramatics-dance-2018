@@ -28,7 +28,7 @@ var Scheduler5 = function(startTime) {
         this.START-0.5-0.1, //moveMusicClock
         this.START-0.5-0.1, //moveCamera
         this.START-0.5-0.1, //createSpiral
-        this.START + 8, // createPolyhedra
+        this.START + 4, // createPolyhedra
         this.START + 12, // expandShadow
         this.START + 8, // earthMelody
         this.START + 15-0.5, //randomExplore //21
@@ -424,14 +424,23 @@ var Scheduler5 = function(startTime) {
     }
     this.createPolyhedra = function(){
 
-        var minZ = -200, maxZ = -100,
-            minX = -10, maxX = 10,
-            minY = -10, maxY = 10,
-            minSize = 100, maxSize = 300;
 
-        var polyNum = 10;
+        var oriSize = 1;
+        var minZ = -200, maxZ = -100;
+        var rangeX = [[-50, 50], [-50, 50]],
+            rangeY = [[-10, 10], [30, 50]];
+
+            // minX = -30, maxX = 30,
+            // minY = -10, maxY = 10,
+            minSize = (10/oriSize)*100, maxSize = (10/oriSize)*300;
+
+        var polyNum = 20;
         var shapeTypes = ['tetrahedron', 'dodecahedron', 'octahedron', 'icosahedron', 'cube'];
         for (var i = 0; i < polyNum; i++) {
+            var range_ind = Math.floor(Math.random() * 2);
+            var minX = rangeX[range_ind][0], maxX = rangeX[range_ind][1],
+                minY = rangeY[range_ind][0], maxY = rangeY[range_ind][1];
+
             var center_pos = [
                 Math.random() * (maxX - minX) + minX,
                 Math.random() * (maxY - minY) + minY,
@@ -439,25 +448,34 @@ var Scheduler5 = function(startTime) {
             ];
             var size = Math.random() * (maxSize - minSize) + minSize;
             var tri = 3;
-            var majorColor = ColorMap['fullblue'][Math.round(Math.random()*8)];
-            var shapeType = shapeTypes[Math.round(Math.random()*4)];
+            var majorColor = ColorMap['fullblue'][Math.floor(Math.random()*9)];
+            var shapeType = shapeTypes[Math.floor(Math.random()*5)];
 
             var polyhedron = new WoodBlock(
-                center_pos, 3, tri, majorColor, shapeType
+                center_pos, oriSize, tri, majorColor, shapeType
             )
             polyhedron.name = "polyhedron" + i;
             SCENE.add(polyhedron);
 
+            polyhedron.polyRotateDuration([
+                Math.random()*0.01, Math.random()*0.01, Math.random()*0.01],
+                17
+            )
+
+            // polyhedron.polyExpand(size, 8);
             TweenLite.to(
-                polyhedron.scale, 17,
+                polyhedron.poly.scale, 8,
                 {
                     x: size,
                     y: size,
                     z: size,
                     ease: Power4.easeIn,
+                    onUpdate: function(){
+                        console.log(polyhedron.poly.scale);
+                    }
+
                 }
             )
-            console.log(polyhedron);
         }
 
     }
