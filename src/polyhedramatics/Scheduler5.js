@@ -16,28 +16,34 @@ var Scheduler5 = function(startTime) {
         'createPolyhedra',
         'expandShadows',
         'earthMelody',
-        // 'randomExplore',
-        // 'showSoundWave',
+        'disposeInitial',
+        'earthMelody2',
+        'earthMelody3',
+        'randomExplore',
+        'showSoundWave',
     ]
 
     this.startSecond = [
-        this.START-0.5-0.2, //initCamera,
+        this.START-0.5-0.2, //initCamera, use 3 sec to go to Ori Position
         this.START-0.5-0.2, //initMusicClock
         this.START-0.5-0.2, //soloMusicClock
         this.START-0.5-0.1, //startJumpyNote
         this.START-0.5-0.1, //moveMusicClock
-        this.START-0.5-0.1, //moveCamera
+        this.START-0.5-0.1 + 3, //moveCamera
         this.START-0.5-0.1, //createSpiral
         this.START + 4, // createPolyhedra
         this.START + 12, // expandShadow
         this.START + 8, // earthMelody
+        this.START + 15-0.3, // disposeInitial
+        this.START + 15-0.3, // earthMelody2
+        this.START + 20, // earthMelody3
         this.START + 15-0.5, //randomExplore //21
-        this.START + 25,
+        this.START + 25, //show sound wave
     ]
 
     this.musicClockR = 10;
     this.oriCameraPosition = [0, -this.musicClockR*.4 + 10, this.musicClockR * 1.4];
-    this.finalY = 80;
+    this.finalY = 100;
 
     this.initCameraPosition = function(){
         SCENE.background = new THREE.Color("oldlace");
@@ -49,16 +55,28 @@ var Scheduler5 = function(startTime) {
         );
 
         CAMERA.rotation.set(0, 0, 0);
+
         TweenLite.from(
-            CAMERA.position, 1.2,
+
+            CAMERA.position, 3,
             {
-                z: 200,
-                onComplete: function(){
-                    CAMERA.rotation.set(0, 0, 0);
-                },
-                ease: Power0.easeOut,
+                delay: 2.5,
+                y: 25,
+                z: 0,
+                ease: Power0.easeIn,
             }
         )
+
+        TweenLite.from(
+
+            CAMERA.rotation, 3,
+            {
+                delay: 1,
+                x: -Math.PI/2,
+                ease: Power2.easeIn,
+            }
+        )
+
     }
 
     this.initMusicClock = function(){
@@ -74,17 +92,12 @@ var Scheduler5 = function(startTime) {
                 'dimEdgeColor': ColorMap['grey'][2],
                 'shineNodeColor': 'greenyellow',
                 'shineEdgeColor': 'greenyellow',
+                'dimNodeRadius': this.musicClockR / 12,
             }
         );
         musicClock.position.set(center_pos[0], center_pos[1], center_pos[2])
 
-        TweenLite.to(
-            musicClock.rotation, 3.5, {
-                x: -Math.PI/2,
-                ease: Power4.easeIn,
-            }
-        )
-        // musicClock.rotation.x = -Math.PI/2;
+        musicClock.rotation.x = -Math.PI/2;
         musicClock.name = 'musicClock';
         SCENE.add(musicClock);
 
@@ -168,6 +181,7 @@ var Scheduler5 = function(startTime) {
 
         var center_pos = getNotePos('d'),
             majorColor = 'dodgerblue',
+            majorTrailColor = 'grey',
             length = 1000,
             trailWidth = .02,
             trailBlending = THREE.MultiplyBlending;
@@ -188,13 +202,13 @@ var Scheduler5 = function(startTime) {
                 wireWidth
         );
         // headPoly.polyPulseDuration(1, .001, 5, 15)
-        headPoly.polyRotateDuration([0.001, 0.001, 0.001],
+        headPoly.polyRotateDuration([0.1, 0.001, 0.001],
                                    30);
 
         var jumpyNote = new FlyingNote(
             headPoly,
             center_pos,
-            "dodgerblue",
+            majorTrailColor,
             length,
             trailWidth,
             trailBlending
@@ -299,21 +313,22 @@ var Scheduler5 = function(startTime) {
     }
 
     this.moveCamera = function(){
+        // start at + 3
+
         var musicClock = SCENE.getObjectByName('musicClock');
 
         var t = TweenLite.to(
-            CAMERA.position, 24,
+            CAMERA.position, 21,
             {
                 y: this.finalY + this.oriCameraPosition[1] - 20,
                 ease: Linear.easeNone,
                 onUpdate: function(){
-                    CAMERA.position.z -= 0.0000001
                 }
             }
         )
 
         var t2 = TweenLite.delayedCall(
-            9,
+            6,
             function (){
                 t.kill();
                 TweenLite.to(
@@ -329,7 +344,7 @@ var Scheduler5 = function(startTime) {
         )
 
         var t3 = TweenLite.delayedCall(
-            24,
+            21,
             function (){
                 t2.kill();
                 TweenLite.to(
@@ -423,15 +438,13 @@ var Scheduler5 = function(startTime) {
 
     }
     this.createPolyhedra = function(){
+        // at 160 + 4
 
-
-        var oriSize = 1;
+        var oriSize = 10;
         var minZ = -200, maxZ = -100;
         var rangeX = [[-50, 50], [-50, 50]],
             rangeY = [[-10, 10], [30, 50]];
 
-            // minX = -30, maxX = 30,
-            // minY = -10, maxY = 10,
             minSize = (10/oriSize)*100, maxSize = (10/oriSize)*300;
 
         var polyNum = 20;
@@ -448,7 +461,7 @@ var Scheduler5 = function(startTime) {
             ];
             var size = Math.random() * (maxSize - minSize) + minSize;
             var tri = 3;
-            var majorColor = ColorMap['fullblue'][Math.floor(Math.random()*9)];
+            var majorColor = 'oldlace'
             var shapeType = shapeTypes[Math.floor(Math.random()*5)];
 
             var polyhedron = new WoodBlock(
@@ -459,9 +472,11 @@ var Scheduler5 = function(startTime) {
 
             polyhedron.polyRotateDuration([
                 Math.random()*0.01, Math.random()*0.01, Math.random()*0.01],
-                17
+                35
             )
-
+            polyhedron.changeColor(
+                23, ColorMap['fullblue'][Math.floor(Math.random()*9)], false
+            )
             // polyhedron.polyExpand(size, 8);
             TweenLite.to(
                 polyhedron.poly.scale, 8,
@@ -471,7 +486,6 @@ var Scheduler5 = function(startTime) {
                     z: size,
                     ease: Power4.easeIn,
                     onUpdate: function(){
-                        console.log(polyhedron.poly.scale);
                     }
 
                 }
@@ -481,15 +495,16 @@ var Scheduler5 = function(startTime) {
     }
 
     this.expandShadows = function(){
+        // at + 12
 
         for (var i = 0; i < this.soloConfigs['melody'].length; i++){
             var shadow = SCENE.getObjectByName('shadow' + i);
             TweenLite.to(
-                shadow.poly.scale, 9,
+                shadow.poly.scale, 13,
                 {
-                    x: 6,
-                    y: 6,
-                    z: 6,
+                    x: 12,
+                    y: 12,
+                    z: 12,
                 }
 
             )
@@ -501,13 +516,7 @@ var Scheduler5 = function(startTime) {
 
         var size = 1,
             color = 'blue',
-            // sepr = 50,
-            // layer = 30,
-            // withEdge = false,
-            pos = [-1000, 0, -2000];
-
-        console.log(CAMERA.position);
-        console.log(pos);
+            pos = [-1200, -100, -350];
 
         var MNF = new MelodyNotesFactory(
             150*size, 150*size, 500*size, color
@@ -519,21 +528,140 @@ var Scheduler5 = function(startTime) {
 
         var earthMelody = MNF.createMelody(
             melody,
-            [0, 0, 0],
+            pos,
             null,
             false
         )
-        earthMelody = MNF.setMelodyNotesPosition(earthMelody, pos);
+        earthMelody = MNF.setMelodyNotesPosition(earthMelody, [0, 0, 0]);
         earthMelody.name = "earthMelody";
-
         earthMelody.scale.set(size, size, size);
-        // earthMelody.rotation.x = Math.PI;
-        // earthMelody.rotation.y = Math.PI/2;
 
+        var t = new TimelineLite();
+        for (var i = 0; i < earthMelody.melody.length; i++) {
+            t = t.from(
+                earthMelody.melody[i].position, 1,
+                {
+                    delay: .01,
+                    z: 2000,
+                    ease: Power4.easeOut,
+                }
+            )
+        }
+        for (var i = 0; i < earthMelody.melody.length; i++){
+            TweenLite.to(
+                earthMelody.melody[i].position, 20,
+                {
+                    delay: (1 + .01) * (i+1) + .05*i,
+                    z: -2000,
+                    ease: Linear.easeNone,
+                }
+            )
+        }
 
         SCENE.add(earthMelody);
 
     }
+    this.disposeInitial = function(){
+        var names = ['musicClock', 'jumpyNote', 'spiral'];
+        for (var i = 0; i < this.soloConfigs['melody'].length; i++) {
+            names.push("shadow" + i);
+        }
+        for (var i = 0; i < names.length; i++){
+            obj = SCENE.getObjectByName(names[i]);
+            SCENE.remove(obj);
+            disposeHierarchy(obj);
+        }
+
+    }
+
+
+    this.earthMelody2 = function(){
+        console.log(CAMERA.position)
+        var size = .8,
+            color = 'darkgreen',
+            pos = [-400, 0, -150];
+
+        var MNF = new MelodyNotesFactory(
+            150*size, 100*size, 150*size, color
+        );
+
+        var notes = ['l1', 's1', 'l1', 's1', 'd2', 't1', 'r2'];
+        var durations = [.2, .5, .8, .5, .5, 1, 1];
+        var melody = [];
+        for (var i = 0; i < notes.length; i++) {melody.push({'note': notes[i]});}
+
+        var earthMelody = MNF.createMelody(
+            melody,
+            pos,
+            null,
+            false
+        )
+        earthMelody = MNF.setMelodyNotesPosition(earthMelody, [0, 0, 0]);
+        earthMelody.name = "earthMelody2";
+        earthMelody.scale.set(size, size, size);
+
+        var t = new TimelineLite();
+        for (var i = 0; i < earthMelody.melody.length; i++) {
+            t = t.from(
+                earthMelody.melody[i].position, durations[i],
+                {
+                    delay: .01,
+                    x: 0,
+                    y: this.finalY,
+                    z: 3500,
+                    ease: Power0.easeIn,
+                }
+            )
+        }
+        SCENE.add(earthMelody);
+
+    }
+
+
+    this.earthMelody3 = function(){
+        console.log(CAMERA.position)
+        var size = .7,
+            color = 'yellow',
+            pos = [-100, 0, 50];
+
+        var MNF = new MelodyNotesFactory(
+            100*size, 50*size, 80*size, color
+        );
+
+        var notes = ['l1', 's1', 'd2', 't1', 'r2'];
+        var durations = [.2, .4, .4, .4, 1];
+        var melody = [];
+        for (var i = 0; i < notes.length; i++) {melody.push({'note': notes[i]});}
+
+        var earthMelody = MNF.createMelody(
+            melody,
+            pos,
+            null,
+            false
+        )
+        earthMelody = MNF.setMelodyNotesPosition(earthMelody, [0, 0, 0]);
+        earthMelody.name = "earthMelody3";
+        earthMelody.scale.set(size, size, size);
+
+        var t = new TimelineLite();
+        for (var i = 0; i < earthMelody.melody.length; i++) {
+            t = t.from(
+                earthMelody.melody[i].position, durations[i],
+                {
+                    delay: .01,
+                    x: 0,
+                    y: this.finalY,
+                    z: 5500,
+                    ease: Power0.easeIn,
+                }
+            )
+        }
+        SCENE.add(earthMelody);
+
+    }
+
+
+
 
 
     this.randomExplore = function(){
@@ -553,7 +681,7 @@ var Scheduler5 = function(startTime) {
             var center_pos = [Math.random()*dim-dim/2, Math.random()*dim-dim/2, Math.random()*dim-dim*2],
                 majorColor = colors[i % colorNum],
                 length = 500,
-                trailWidth = 2,
+                trailWidth = .8,
                 trailBlending = THREE.NormalBlending;
 
             var headPoly = new THREE.Group();
@@ -612,9 +740,10 @@ var Scheduler5 = function(startTime) {
             soundWave.pulseParticle, [8, 50, 50, shineColor, true], soundWave, "0"
         ).call(
             soundWave.pulseParticle, [8.5, 50, 50, shineColor, true], soundWave, "21" // shine at +25, 210sec
-        ).call(
-            soundWave.pulseParticle, [5, 50, 50, shineColor, false], soundWave, "40" // shine end at 230sec
         )
+        // .call(
+        //     soundWave.pulseParticle, [5, 50, 50, shineColor, false], soundWave, "40" // shine end at 230sec
+        // )
         pulseT.play();
 
     }

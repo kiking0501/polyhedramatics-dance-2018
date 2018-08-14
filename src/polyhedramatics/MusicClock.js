@@ -9,7 +9,8 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
 
     this.settings = {
         'dim': {
-            'nodeRadius': this.r / 25,
+            'nodeRadius': setdefault(this.customSettings['dimNodeRadius'],
+                                     this.r / 25),
             'edgeColor': setdefault(this.customSettings['dimEdgeColor'],
                                     ColorMap['grey'][7]),
             'edgeWidth': 1,

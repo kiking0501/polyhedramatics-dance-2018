@@ -308,24 +308,3 @@ var harmonicShapeMap = {
     'l': 'icosahedron',
     't': 'icosahedron1' // 15
 }
-
-WoodBlock.prototype.polyExpand = function(scale, duration) {
-
-    var that = this;
-    function updatePoly(){
-        that.poly.geometry.verticesNeedUpdate = true;
-        console.log(that.poly.geometry.scale);
-    }
-
-    TweenLite.to(
-        this.poly.geometry.scale, duration,
-        {
-            x: scale,
-            y: scale,
-            z: scale,
-            onUpdate: updatePoly,
-        }
-    )
-
-
-}

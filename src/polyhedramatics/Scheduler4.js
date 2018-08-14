@@ -866,6 +866,35 @@ var Scheduler4 = function(startTime) {
             )
 
         }
+
+        var shapeTypes = ['tetrahedron', 'dodecahedron', 'octahedron', 'cube'];
+        for (var i = 0; i < shapeTypes.length; i++) {
+            var center_pos = this.woodBlockCenterPos;
+            var size = Math.random()*40+10;
+            var majorColor = ColorMap['fullblue'][Math.floor(Math.random()*4+5)];
+
+            var crystal = new WoodBlock(
+                center_pos, size, tri, majorColor, shapeType
+            )
+            crystal.name = "crystal" + i;
+            SCENE.add(crystal);
+
+            crystal.polyRotateDuration([
+                Math.random()*0.01, Math.random()*0.01, Math.random()*0.01],
+                5
+            )
+
+            TweenLite.to(
+                crystal.poly.scale, 5,
+                {
+                    x: 5,
+                    y: 5,
+                    z: 5,
+                    ease: Power4.easeIn,
+                }
+            )
+
+        }
     }
 
     this.rushWoodBlockCenterAndReset = function(){
@@ -883,6 +912,9 @@ var Scheduler4 = function(startTime) {
                     var names = ["smallWoodBlock", "bigWoodBlock", "hugeWoodBlock"];
                     for (var i = 0; i < 2; i++){
                         names.push( "planet" + i );
+                    }
+                    for (var i = 0; i < 4; i++){
+                        names.push( "crystal" + i );
                     }
                     for (var i = names.length-1; i > 0; i--){
                         var obj = SCENE.getObjectByName(names[i]);
