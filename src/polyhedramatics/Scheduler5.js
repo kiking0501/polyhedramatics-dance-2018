@@ -38,7 +38,7 @@ var Scheduler5 = function(startTime) {
         this.START + 15-0.3, // earthMelody2
         this.START + 20, // earthMelody3
         this.START + 15-0.5, //randomExplore //21
-        this.START + 25, //show sound wave
+        this.START + 25-0.5, //show sound wave
     ]
 
     this.musicClockR = 10;
@@ -344,17 +344,18 @@ var Scheduler5 = function(startTime) {
         )
 
         var t3 = TweenLite.delayedCall(
-            21,
+            20.5,
             function (){
                 t2.kill();
                 TweenLite.to(
-                    CAMERA.position, 1,
+                    CAMERA.position, 1.5,
                     {
                         z: 5000,
                         // ease: Back.easeOut,
 
                         onComplete: function(){
-                            SCENE.background = new THREE.Color("black")
+                            console.log(CAMERA.position)
+                            // SCENE.background = new THREE.Color("black")
                         }
                     }
                 )
@@ -365,11 +366,11 @@ var Scheduler5 = function(startTime) {
 
         var black = new THREE.Color("black");
         var t4 = TweenLite.delayedCall(
-            24,
+            20.5,
             function (){
 
                 TweenLite.to(
-                    SCENE.background, 1,
+                    SCENE.background, 1.5,
                     {
                         r: black.r,
                         g: black.g,
@@ -381,7 +382,7 @@ var Scheduler5 = function(startTime) {
             [],
             this
         )
-
+        // windChime at 163+22sec = 185
 
     }
 
@@ -472,10 +473,11 @@ var Scheduler5 = function(startTime) {
 
             polyhedron.polyRotateDuration([
                 Math.random()*0.01, Math.random()*0.01, Math.random()*0.01],
-                35
-            )
+                56
+            ) // 220sec
+            // Math.floor(Math.random()*3)
             polyhedron.changeColor(
-                23, ColorMap['fullblue'][Math.floor(Math.random()*9)], false
+                23, ColorMap['fullblue'][i % 9], false
             )
             // polyhedron.polyExpand(size, 8);
             TweenLite.to(
@@ -576,7 +578,6 @@ var Scheduler5 = function(startTime) {
 
 
     this.earthMelody2 = function(){
-        console.log(CAMERA.position)
         var size = .8,
             color = 'darkgreen',
             pos = [-400, 0, -150];
@@ -619,17 +620,17 @@ var Scheduler5 = function(startTime) {
 
 
     this.earthMelody3 = function(){
-        console.log(CAMERA.position)
+
         var size = .7,
-            color = 'yellow',
-            pos = [-100, 0, 50];
+            color = 'yellow3',
+            pos = [-150, 0, 50];
 
         var MNF = new MelodyNotesFactory(
-            100*size, 50*size, 80*size, color
+            100*size, 50*size, 100*size, color
         );
 
         var notes = ['l1', 's1', 'd2', 't1', 'r2'];
-        var durations = [.2, .4, .4, .4, 1];
+        var durations = [.2, .5, .5, .3, 1];
         var melody = [];
         for (var i = 0; i < notes.length; i++) {melody.push({'note': notes[i]});}
 
@@ -661,13 +662,11 @@ var Scheduler5 = function(startTime) {
     }
 
 
-
-
-
     this.randomExplore = function(){
+        var lines = 50;
 
         var colors = [];
-        var colorTypes = ['marine', 'lightblue', 'yellow'];
+        var colorTypes = ['marine', 'lightblue', 'yellow3'];
         for (var c = 0; c < colorTypes.length; c++){
             var len = ColorMap[colorTypes[c]].length;
             for (var i = 0; i < len; i++){
@@ -677,11 +676,11 @@ var Scheduler5 = function(startTime) {
         var colorNum = colors.length;
         var dim = 50;
 
-        for (var i = 0; i < 50; i++) {
+        for (var i = 0; i < lines; i++) {
             var center_pos = [Math.random()*dim-dim/2, Math.random()*dim-dim/2, Math.random()*dim-dim*2],
                 majorColor = colors[i % colorNum],
                 length = 500,
-                trailWidth = .8,
+                trailWidth = 1.3,
                 trailBlending = THREE.NormalBlending;
 
             var headPoly = new THREE.Group();
@@ -712,7 +711,7 @@ var Scheduler5 = function(startTime) {
     }
 
     this.showSoundWave = function(){
-        // play at 45 sec
+        // play at 160+25-.5 = 185-.5
         var center_pos = [0,0,-1000],
             xNum = 30,
             yNum = 30,
@@ -725,7 +724,7 @@ var Scheduler5 = function(startTime) {
         soundWave.name = 'highPitchSoundWave';
         SCENE.add(soundWave);
 
-        var totalTime = 20;
+        var totalTime = 15;
         delaySpeed = 0.02;
         magnitude = 1000;
         t_scale = 1;
@@ -734,12 +733,13 @@ var Scheduler5 = function(startTime) {
             totalTime, delaySpeed, magnitude, t_scale, new TimelineLite({paused:true}), "cylindrical"
         );
         var shineColor = "deepskyblue",
-            dimColor = "mediumblue";
+            dimColor = "blue",
+            hororColor = "darkcyan";
 
         pulseT.call(
             soundWave.pulseParticle, [8, 50, 50, shineColor, true], soundWave, "0"
         ).call(
-            soundWave.pulseParticle, [8.5, 50, 50, shineColor, true], soundWave, "21" // shine at +25, 210sec
+            soundWave.pulseParticle, [10, 50, 50, hororColor, true], soundWave, "10"
         )
         // .call(
         //     soundWave.pulseParticle, [5, 50, 50, shineColor, false], soundWave, "40" // shine end at 230sec
