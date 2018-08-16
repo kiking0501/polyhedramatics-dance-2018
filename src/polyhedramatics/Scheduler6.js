@@ -13,7 +13,7 @@ var Scheduler6 = function(startTime) {
     this.startSecond = [
         this.START,
         this.START,
-        this.START + 5,
+        this.START,
     ]
 
     // Following objects in Scheduler5 are still present
@@ -28,14 +28,25 @@ var Scheduler6 = function(startTime) {
     }
 
     this.meteorList = [];
+    this.meteorSettings = {
+        'notes': [
+            'r', 'l', 'r', 'f', 'l', 'd', 'r', 'm', ,'f', 'D'
+        ],
+        'colors': ColorMap['fullblue'],
+        'bpm': 15.0/7/4,
+        'delayTime': [
+            2, 2, 1.75, 2, 1.75, 1.75, 1.75, 1.5, 1.5, .5
+        ],
+        'startShootingTime': 5,
+    }
+
 
     this.initMeteor = function(){
 
-        var notes = [
-            'r', 'l', 'r', 'f', 'l', 'd', 'r', 'm', ,'f', 'D'
-        ]
-        var colors = ColorMap['fullblue'];
+        var notes = this.meteorSettings['notes'];
+        var colors = this.meteorSettings['colors'];
 
+        var sumTime = 0.0;
 
         for (var i = 0; i < notes.length; i++){
             var center_pos = [-3000, -2000, -7000],
@@ -47,13 +58,13 @@ var Scheduler6 = function(startTime) {
                 center_pos,
                 size,
                 null,
-                majorColor,
+                "black",
                 setdefault(harmonicShapeMap[notes[i]], 'sphere')
             )
 
             var meteor = new FlyingNote(
                 headPoly,
-                center_pos,
+                [-3000, -2000, -7000],
                 majorColor,
                 length
             );
@@ -61,39 +72,49 @@ var Scheduler6 = function(startTime) {
             meteor.name = 'meteor' + i;
             SCENE.add(meteor);
             this.meteorList.push(meteor);
+
+            sumTime += this.meteorSettings['delayTime'][i];
+            headPoly.changeColor(sumTime, colors[i], false);
         }
-            // meteor.position.set(0, 0, 0);
     }
 
     this.shootMeteor = function(){
+        var startShooting = this.meteorSettings['startShooting'];
+        var bpm = this.meteorSettings['bpm'];
+        var delayTime = this.meteorSettings['delayTime'];
 
-        var bpm = 15.0 / 7 / 4;
+        // var bpm = 15.0 / 7 / 4;
 
-        var delayTime = [
-            bpm*2, bpm*2, bpm*1.75, bpm*2, bpm*1.75, bpm*1.75, bpm*1.75, bpm*1.5, bpm*1.5, bpm*.5
-        ]
+        // var delayTime = [
+        //     bpm*2, bpm*2, bpm*1.75, bpm*2, bpm*1.75, bpm*1.75, bpm*1.75, bpm*1.5, bpm*1.5, bpm*.5
+        // ]
 
+        var sumTime = startShooting;
+
+        var t = new TimelineLite({paused: true});
 
         for (var i = 0; i < this.meteorList.length; i++){
             var meteor = this.meteorList[i];
 
-            var t = new TimelineLite();
-            t.from(
+            sumTime += delayTime[i] * bpm;
+
+            TweenLite.from(
                 meteor.trailHeadPosition, 20,
                 {
                     z: 7000,
                     onUpdate: function(ind){
-                        // console.log(that.meteorList);
                         var meteor_obj = that.meteorList[ind];
-                        // console.log(ind, meteor_obj)
                         var apos = v2pos(meteor_obj.trailHeadPosition.clone());
                         meteor_obj.advance(apos)
+                        console.log(ind);
                     },
                     onUpdateParams: [i],
-                    delay: delayTime[i],
+                    delay: sumTime,
                 },
             )
+
         }
+        t.play();
 
     }
 
