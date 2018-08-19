@@ -584,13 +584,13 @@ var Scheduler3 = function(startTime) {
             {
                 'name': 'bigNote2',
                 'pos': [1500, -500, -500],
-                'color': ColorMap['yellow'][2],
+                'color': ColorMap['yellow3'][2],
                 'delay': 0,
             },
             {
                 'name': 'bigNote3',
                 'pos': [2500, 400, -1000],
-                'color': ColorMap['yellow'][2],
+                'color': ColorMap['yellow3'][2],
                 'delay': .2*10,
                 'timeLapse': 4,
                 'sepr': 100,

@@ -57,7 +57,7 @@ var Scheduler4 = function(startTime) {
             var bigNote = SCENE.getObjectByName('bigNote' + i);
             melodyNoteUtil = new MelodyNote();
             melodyNoteUtil.pulsePoints(
-                bigNote, totalTime, minSize, maxSize, ColorMap['yellow'][0], layerDelay
+                bigNote, totalTime, minSize, maxSize, ColorMap['yellow3'][0], layerDelay
             );
         }
 
@@ -145,7 +145,7 @@ var Scheduler4 = function(startTime) {
             zNum = 5,
             majorColor = 'black',
             size = 30,
-            dist = 1000;
+            dist = 800;
 
         var soundWave = new SoundWave(center_pos, xNum, yNum, zNum, majorColor, size, dist);
         soundWave.rotation.y = Math.PI/2;
@@ -198,7 +198,7 @@ var Scheduler4 = function(startTime) {
     this._shineTunnelGate = function(totalTime, finalColor, minSize, maxSize, layerId){
 
         totalTime = setdefault(totalTime, 1);
-        finalColor = setdefault(finalColor, ColorMap['yellow'][0]);
+        finalColor = setdefault(finalColor, ColorMap['yellow3'][0]);
         minSize = setdefault(minSize, 3);
         maxSize = setdefault(maxSize, 5);
         layerId = setdefault(layerId, [1,2]);

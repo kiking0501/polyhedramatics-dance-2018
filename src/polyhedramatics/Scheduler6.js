@@ -27,17 +27,77 @@ var Scheduler6 = function(startTime) {
         CAMERA.position.set(0, 39.77, 5000);
     }
 
-    this.meteorList = [];
     this.meteorSettings = {
         'notes': [
-            'r', 'l', 'r', 'f', 'l', 'd', 'r', 'm', ,'f', 'D'
+            'm', 'r', 'l', 'r', 'f', 'l', 'd', 'r', 'm', 'f', 'D'
         ],
         'colors': ColorMap['fullblue'],
         'bpm': 15.0/7/4,
         'delayTime': [
-            2, 2, 1.75, 2, 1.75, 1.75, 1.75, 1.5, 1.5, .5
+            0, 2, 2, 1.75, 1.75, 1.75, .75, 1.75, 1.5, 1.5, .5
         ],
-        'startShootingTime': 5,
+        'startShootingTime': 2,
+        'initZ': 4000,
+        'finalZ': -4000,
+        'bottomY': -3000,
+        'upperY': 3000,
+        'center_pos': [
+            {
+                'initX': -7000,
+                'finalX': -10000,
+                'num': 5
+            },
+            {
+                'initX': -7000,
+                'finalX': -10000,
+                'num': 5
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 4
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 4
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 4
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 3
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 3
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 2
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 2
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 2
+            },
+            {
+                'initX': -2000,
+                'finalX': -4000,
+                'num': 1
+            },
+        ]
     }
 
 
@@ -45,76 +105,88 @@ var Scheduler6 = function(startTime) {
 
         var notes = this.meteorSettings['notes'];
         var colors = this.meteorSettings['colors'];
+        var bpm = this.meteorSettings['bpm'];
 
-        var sumTime = 0.0;
+        var sumTime = this.meteorSettings['startShootingTime'];
 
         for (var i = 0; i < notes.length; i++){
-            var center_pos = [-3000, -2000, -7000],
-                majorColor = colors[i],
-                length = 100,
-                size = 100;
+            var initX = this.meteorSettings['center_pos'][i]['initX'];
+            var num = this.meteorSettings['center_pos'][i]['num'];
 
-            var headPoly = new WoodBlock(
-                center_pos,
-                size,
-                null,
-                "black",
-                setdefault(harmonicShapeMap[notes[i]], 'sphere')
-            )
+            for (var j = 0; j < num; j ++ ) {
+                var centerX = initX + (-initX - initX) * 1.0 / num * j;
+                var centerY = this.meteorSettings['bottomY'] + (this.meteorSettings['upperY']
+                     - this.meteorSettings['bottomY']) *1.0 / notes.length * i;
+                var centerZ = this.meteorSettings['initZ'];
 
-            var meteor = new FlyingNote(
-                headPoly,
-                [-3000, -2000, -7000],
-                majorColor,
-                length
-            );
+                var center_pos = [centerX, centerY, centerZ],
+                    majorColor = colors[i],
+                    length = 100,
+                    size = 100;
 
-            meteor.name = 'meteor' + i;
-            SCENE.add(meteor);
-            this.meteorList.push(meteor);
+                var headPoly = new WoodBlock(
+                    center_pos,
+                    size,
+                    null,
+                    "black",
+                    setdefault(harmonicShapeMap[notes[i]], 'sphere')
+                )
 
-            sumTime += this.meteorSettings['delayTime'][i];
-            headPoly.changeColor(sumTime, colors[i], false);
+                var meteor = new FlyingNote(
+                    headPoly,
+                    center_pos,
+                    majorColor,
+                    length
+                );
+
+                meteor.name = 'meteor' + i + '_' + j;
+                SCENE.add(meteor);
+
+                sumTime += this.meteorSettings['delayTime'][i] * bpm;
+                TweenLite.delayedCall(
+                    sumTime,
+                    headPoly.changeColor,
+                    [.5, colors[i], false],
+                    headPoly
+                )
+            }
+
         }
     }
 
     this.shootMeteor = function(){
-        var startShooting = this.meteorSettings['startShooting'];
         var bpm = this.meteorSettings['bpm'];
         var delayTime = this.meteorSettings['delayTime'];
 
-        // var bpm = 15.0 / 7 / 4;
+        var sumTime = this.meteorSettings['startShootingTime'];
 
-        // var delayTime = [
-        //     bpm*2, bpm*2, bpm*1.75, bpm*2, bpm*1.75, bpm*1.75, bpm*1.75, bpm*1.5, bpm*1.5, bpm*.5
-        // ]
 
-        var sumTime = startShooting;
-
-        var t = new TimelineLite({paused: true});
-
-        for (var i = 0; i < this.meteorList.length; i++){
-            var meteor = this.meteorList[i];
+        for (var i = 0; i < this.meteorSettings['notes'].length; i++){
 
             sumTime += delayTime[i] * bpm;
+            var num = this.meteorSettings['center_pos'][i]['num'];
 
-            TweenLite.from(
-                meteor.trailHeadPosition, 20,
-                {
-                    z: 7000,
-                    onUpdate: function(ind){
-                        var meteor_obj = that.meteorList[ind];
-                        var apos = v2pos(meteor_obj.trailHeadPosition.clone());
-                        meteor_obj.advance(apos)
-                        console.log(ind);
+            for (var j = 0; j < num; j++) {
+
+                var meteor = SCENE.getObjectByName('meteor' + i + '_' + j);
+
+                TweenLite.to(
+                    meteor.trailHeadPosition, 20,
+                    {
+                        x: that.meteorSettings['center_pos'][i]['finalX'],
+                        z: that.meteorSettings['finalZ'],
+                        onUpdate: function(ind, jnd){
+                            var meteor_obj = SCENE.getObjectByName('meteor' + ind + '_' + jnd);
+                            var apos = v2pos(meteor_obj.trailHeadPosition.clone());
+                            meteor_obj.advance(apos)
+                        },
+                        onUpdateParams: [i, j],
+                        onUpdateScope: this,
+                        delay: sumTime,
                     },
-                    onUpdateParams: [i],
-                    delay: sumTime,
-                },
-            )
-
+                )
+            }
         }
-        t.play();
 
     }
 

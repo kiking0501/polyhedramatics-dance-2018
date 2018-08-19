@@ -739,7 +739,7 @@ var Scheduler5 = function(startTime) {
         pulseT.call(
             soundWave.pulseParticle, [8, 50, 50, shineColor, true], soundWave, "0"
         ).call(
-            soundWave.pulseParticle, [10, 50, 50, hororColor, true], soundWave, "10"
+            soundWave.pulseParticle, [10, 80, 50, hororColor, true], soundWave, "10"
         )
         // .call(
         //     soundWave.pulseParticle, [5, 50, 50, shineColor, false], soundWave, "40" // shine end at 230sec

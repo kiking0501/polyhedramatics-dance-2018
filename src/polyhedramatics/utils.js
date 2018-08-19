@@ -8,7 +8,7 @@ var ColorMap = {
     'marine': ['aquamarine', 'turquoise', 'darkcyan'],
     'green': ['lightgreen', 'mediumspringgreen', 'limegreen'],
     'darkgreen': ['darkseagreen', 'mediumseagreen', 'forestgreen'],
-    'yellow3': ['yellow', 'gold', 'goldenrod'],
+    'yellow3': ['lightyellow', 'gold', 'goldenrod'],
     'salmon': ['oldlace', 'navajowhite', 'sandybrown'],
     'coral': ['mistyrose', 'lightsalmon', 'salmon'],
     'red': ['lightcoral', 'red', 'firebrick'],
