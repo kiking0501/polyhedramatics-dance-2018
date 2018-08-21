@@ -10,7 +10,7 @@ var ColorMap = {
     'darkgreen': ['darkseagreen', 'mediumseagreen', 'forestgreen'],
     'yellow3': ['lightyellow', 'gold', 'goldenrod'],
     'salmon': ['oldlace', 'navajowhite', 'sandybrown'],
-    'coral': ['mistyrose', 'lightsalmon', 'salmon'],
+    'coral': ['lightsalmon', 'salmon', 'orangered'],
     'red': ['lightcoral', 'red', 'firebrick'],
     'grey': ['white', 'whitesmoke', 'gainsboro', 'lightgrey', 'silver', 'darkgray', 'gray', 'dimgray', 'black'],
     'fullblue': [

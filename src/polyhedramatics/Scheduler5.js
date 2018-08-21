@@ -473,8 +473,8 @@ var Scheduler5 = function(startTime) {
 
             polyhedron.polyRotateDuration([
                 Math.random()*0.01, Math.random()*0.01, Math.random()*0.01],
-                56
-            ) // 220sec
+                66
+            ) // 230sec
             // Math.floor(Math.random()*3)
             polyhedron.changeColor(
                 23, ColorMap['fullblue'][i % 9], false
@@ -587,7 +587,7 @@ var Scheduler5 = function(startTime) {
         );
 
         var notes = ['l1', 's1', 'l1', 's1', 'd2', 't1', 'r2'];
-        var durations = [.2, .5, .8, .5, .5, 1, 1];
+        var durations = [0, .5, 1, .5, .5, 1, 1];
         var melody = [];
         for (var i = 0; i < notes.length; i++) {melody.push({'note': notes[i]});}
 
@@ -622,7 +622,7 @@ var Scheduler5 = function(startTime) {
     this.earthMelody3 = function(){
 
         var size = .7,
-            color = 'yellow3',
+            color = 'coral',
             pos = [-150, 0, 50];
 
         var MNF = new MelodyNotesFactory(
@@ -680,7 +680,7 @@ var Scheduler5 = function(startTime) {
             var center_pos = [Math.random()*dim-dim/2, Math.random()*dim-dim/2, Math.random()*dim-dim*2],
                 majorColor = colors[i % colorNum],
                 length = 500,
-                trailWidth = 1.3,
+                trailWidth = 1.5,
                 trailBlending = THREE.NormalBlending;
 
             var headPoly = new THREE.Group();
