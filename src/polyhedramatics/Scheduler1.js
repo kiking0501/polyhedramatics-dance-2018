@@ -1,3 +1,5 @@
+/* [0-8sec] Start of the Song, just before woodBlocks
+*/
 
 var Scheduler1 = function(startTime) {
 

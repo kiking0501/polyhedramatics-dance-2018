@@ -1,3 +1,7 @@
+/* [160-203 sec] New World Creation, up to my favourate blue crystal
+*/
+
+
 var Scheduler5 = function(startTime) {
 // A Whole New World begins here. :)
 
@@ -623,14 +627,14 @@ var Scheduler5 = function(startTime) {
 
         var size = .7,
             color = 'coral',
-            pos = [-150, 0, 50];
+            pos = [-150, 0, 70];
 
         var MNF = new MelodyNotesFactory(
-            100*size, 50*size, 100*size, color
+            100*size, 50*size, 90*size, color
         );
 
         var notes = ['l1', 's1', 'd2', 't1', 'r2'];
-        var durations = [.2, .5, .5, .3, 1];
+        var durations = [.2, .5, .5, .3, .8];
         var melody = [];
         for (var i = 0; i < notes.length; i++) {melody.push({'note': notes[i]});}
 

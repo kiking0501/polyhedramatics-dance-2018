@@ -181,7 +181,7 @@ MusicClock.prototype.createNode = function(pos, color, r, isImptNode, isTonic) {
 
 }
 
-MusicClock.prototype.pulse = function(chords, timeLapse, repeat, betweenDelay) {
+MusicClock.prototype.pulse = function(chords, timeLapse, repeat, betweenDelay, scale) {
     var firstDelay = (betweenDelay > 0)? .1: 0.0
 
     for (var i = 0; i < chords.length; i++) {
@@ -193,7 +193,7 @@ MusicClock.prototype.pulse = function(chords, timeLapse, repeat, betweenDelay) {
             var t_n = new TimelineLite();
             for (var r = 0; r < repeat; r++) {
                 var delay = (r == 0? firstDelay: betweenDelay);
-                this._pulseNode(node_ind, timeLapse, t_n, delay);
+                this._pulseNode(node_ind, timeLapse, t_n, delay, scale);
                 // console.log(chord);
             }
             // edge movement
@@ -208,9 +208,10 @@ MusicClock.prototype.pulse = function(chords, timeLapse, repeat, betweenDelay) {
     }
 }
 
-MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay){
+MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay, scale){
     t = setdefault(t, new TimelineLite());
     beforeDelay = setdefault(beforeDelay, 0);
+    scale = setdefault(scale, 2)
 
     var shineColor = this.settings['shine']['nodeColor'][node_ind];
 
@@ -231,7 +232,7 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay){
           {color: new THREE.Color(shineColor)})
      .to(this.nodes[node_ind].scale, timeLapse,
         {
-            delay: beforeDelay, x: 2, y: 2, z: 2,
+            delay: beforeDelay, x: scale, y: scale, z: scale,
             onUpdate: keepShineColor,
         })
      // .set(this.nodes[node_ind].material,

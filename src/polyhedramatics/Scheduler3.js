@@ -1,3 +1,5 @@
+/* [36-70sec] melodyNotes, with grand colorful-dots closing
+*/
 
 var Scheduler3 = function(startTime) {
     var that = this;

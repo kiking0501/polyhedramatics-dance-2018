@@ -1,3 +1,7 @@
+/* [70-160sec] shining tunnel with flyingNotes + universe traverse,
+               up to New World Creation
+*/
+
 var Scheduler4 = function(startTime) {
     var that = this;
 
