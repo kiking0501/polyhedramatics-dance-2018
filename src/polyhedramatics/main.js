@@ -54,6 +54,7 @@ function playAudio(inputStart) {
 
     } else {
 
+        $("#loading_block").html("Loading... (it might take long)")
         LISTENER = new THREE.AudioListener();
         CAMERA.add( LISTENER );
         SOUND = new THREE.Audio( LISTENER );
@@ -65,6 +66,7 @@ function playAudio(inputStart) {
             // sound.setLoop( true );
             SOUND.setVolume( 2.0 );
             polyAnimate(inputStart);
+            $("#loading_block").html("");
         });
 
     }
@@ -123,7 +125,7 @@ function render(timestamp) {
             requestAnimationFrame(render);
         } else if (PAUSE) {
             START = null;
-            SOUND.stop();
+            SOUND.pause();
         } else {
             $('#timestamp').html("");
             START = null;
@@ -242,3 +244,17 @@ function onWindowResize() {
     RENDERER.setSize( WIDTH, HEIGHT );
 
 }
+
+// $(window).focus(function() {
+//     if (SOUND && !PAUSE) {
+//         SOUND.play();
+//     }
+// });
+
+// $(window).blur(function() {
+//     pause()
+//     // if (SOUND){
+
+//     //     SOUND.pause();
+//     // }
+// });
