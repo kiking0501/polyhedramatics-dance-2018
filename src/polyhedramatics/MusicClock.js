@@ -31,6 +31,15 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
         'l': 9,
         't': 11,
     };
+    this.reverseNoteMap = {
+        0: 'd',
+        2: 'r',
+        4: 'm',
+        5: 'f',
+        7: 's',
+        9: 'l',
+        11: 't',
+    }
     this.importNodesInd = new Set([0, 2, 4, 5, 7, 9, 11]);
 
     for (var i = 0; i < 12; i++) { this.noteMap[i] = i; }
@@ -63,6 +72,8 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
     }
 
     // create music nodes
+    this.textLoader = new THREE.FontLoader()
+
     this.nodes = [];
     var colors = [];
     for (var i = 0; i < this.vertices.length; i++) {
@@ -93,7 +104,8 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
             colors[i],
             this.settings['dim']['nodeRadius'],
             this.importNodesInd.has(i),
-            (i == 0)
+            (i == 0),
+            i
         )
         this.add(node);
         this.nodes.push(node);
@@ -119,7 +131,7 @@ MusicClock.prototype.createEdge = function(st_v, et_v, color, lineWidth) {
 }
 
 
-MusicClock.prototype.createNode = function(pos, color, r, isImptNode, isTonic) {
+MusicClock.prototype.createNode = function(pos, color, r, isImptNode, isTonic, ind) {
     isTonic = setdefault(isTonic, false);
 
     if (isTonic) { r = 1.5*r; }
@@ -165,7 +177,11 @@ MusicClock.prototype.createNode = function(pos, color, r, isImptNode, isTonic) {
     }
     circle.position.set(pos[0], pos[1], pos[2]);
 
-    return circle;
+    var noteGroup = new THREE.Group();
+    noteGroup.circle = circle;
+    noteGroup.add(circle);
+
+    return noteGroup;
 
     // old circle geometry
     // var geometry = new THREE.CircleGeometry(
@@ -217,18 +233,18 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay, 
 
     var dimColor = this.settings['dim']['nodeColor'][node_ind];
 
-    TweenLite.killTweensOf(this.nodes[node_ind].material);
+    TweenLite.killTweensOf(this.nodes[node_ind].circle.material);
 
     var that = this;
     function keepShineColor() {
-        that.nodes[node_ind].material.color = new THREE.Color(shineColor);
+        that.nodes[node_ind].circle.material.color = new THREE.Color(shineColor);
     }
     function keepDimColor() {
-        that.nodes[node_ind].material.color = new THREE.Color(dimColor);
+        that.nodes[node_ind].circle.material.color = new THREE.Color(dimColor);
     }
 
 
-    t.set(this.nodes[node_ind].material,
+    t.set(this.nodes[node_ind].circle.material,
           {color: new THREE.Color(shineColor)})
      .to(this.nodes[node_ind].scale, timeLapse,
         {
@@ -242,7 +258,7 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay, 
             x: 1, y: 1, z: 1,
             onUpdate: keepShineColor,
         })
-     .set(this.nodes[node_ind].material,
+     .set(this.nodes[node_ind].circle.material,
           {color: new THREE.Color(dimColor)});
     return t;
 }
