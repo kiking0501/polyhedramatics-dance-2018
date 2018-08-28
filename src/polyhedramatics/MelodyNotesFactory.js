@@ -38,11 +38,11 @@ MelodyNotesFactory.prototype.resetConfig = function(nodeRadius, toNextSemiToneHe
     this.majorColor = majorColor;
 
 }
-MelodyNotesFactory.prototype.createMelody = function(notesConfig, startPos, relativeTo, withEdge){
+MelodyNotesFactory.prototype.createMelody = function(notesConfig, startPos, relativeTo, visEdge){
     // notesConfig should be a list of dictionary
     // [{'note': 'd', 'color': 'blue'}, ...]
     var melodyNotes = new THREE.Group();
-    withEdge = setdefault(withEdge, true);
+    visEdge = setdefault(visEdge, true);
 
     var melody = [];
     var notes = [],
@@ -64,11 +64,17 @@ MelodyNotesFactory.prototype.createMelody = function(notesConfig, startPos, rela
                                    notesConfig[i]['note5num']);
         var melodyNote = new MelodyNote(node);
 
-        if (i > 0 && withEdge)  {
+        if (i > 0)  {
+
             var edge = this.createEdge(
                 positions[i-1], positions[i], colors[0], 10
             );
+            if (!visEdge) {
+                edge.visible = false;
+            }
             melodyNote.add(edge);
+            melodyNote.edge = edge;
+
         }
         melodyNotes.add(melodyNote);
 

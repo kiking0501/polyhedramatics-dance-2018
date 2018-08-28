@@ -29,7 +29,7 @@ var Scheduler5 = function(startTime) {
 
     this.startSecond = [
         this.START-0.5-0.2, //initCamera, use 3 sec to go to Ori Position
-        this.START-0.5-0.2, //initMusicClock
+        this.START-0.5-0.25, //initMusicClock
         this.START-0.5-0.2, //soloMusicClock
         this.START-0.5-0.1, //startJumpyNote
         this.START-0.5-0.1, //moveMusicClock
@@ -97,6 +97,7 @@ var Scheduler5 = function(startTime) {
                 'shineNodeColor': 'greenyellow',
                 'shineEdgeColor': 'greenyellow',
                 'dimNodeRadius': this.musicClockR / 12,
+                'textColor': 'lightcyan'
             }
         );
         musicClock.position.set(center_pos[0], center_pos[1], center_pos[2])
@@ -104,6 +105,10 @@ var Scheduler5 = function(startTime) {
         musicClock.rotation.x = -Math.PI/2;
         musicClock.name = 'musicClock';
         SCENE.add(musicClock);
+
+        musicClock.pulse(
+            ['d', 'r', 'm', 's', 'l'], 1, 1, 0.0
+        )
 
     }
 
@@ -173,7 +178,7 @@ var Scheduler5 = function(startTime) {
 
         function getNotePos(note){
             var noteInd = musicClock.noteMap[note];
-            var oriPos = musicClock.nodes[noteInd].position;
+            var oriPos = musicClock.nodes[noteInd].circle.position;
 
             return [
                 oriPos.x,
@@ -247,7 +252,7 @@ var Scheduler5 = function(startTime) {
 
             var tL = timeLapse * ratio[i] - 0.0005*i;
             var newPos = getNotePos(that.soloConfigs['melody'][i]);
-            var shape = harmonicShapeMap[that.soloConfigs['melody'][i]];
+            var shape = harmonicShapeMap[i % 11 + 1];
             var j = {'ind': i};
 
             if (i == 0) {
@@ -728,7 +733,7 @@ var Scheduler5 = function(startTime) {
         soundWave.name = 'highPitchSoundWave';
         SCENE.add(soundWave);
 
-        var totalTime = 15;
+        var totalTime = 45; //15 sec is better?
         delaySpeed = 0.02;
         magnitude = 1000;
         t_scale = 1;
@@ -744,10 +749,9 @@ var Scheduler5 = function(startTime) {
             soundWave.pulseParticle, [8, 50, 50, shineColor, true], soundWave, "0"
         ).call(
             soundWave.pulseParticle, [10, 80, 50, hororColor, true], soundWave, "10"
+        ).call(
+            soundWave.pulseParticle, [5, 50, 50, hororColor, false], soundWave, "40"
         )
-        // .call(
-        //     soundWave.pulseParticle, [5, 50, 50, shineColor, false], soundWave, "40" // shine end at 230sec
-        // )
         pulseT.play();
 
     }

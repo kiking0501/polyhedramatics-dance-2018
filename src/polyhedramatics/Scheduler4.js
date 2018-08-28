@@ -224,35 +224,10 @@ var Scheduler4 = function(startTime) {
     this.flyingNotesSettings = {
         9: {
             'colors': ColorMap['fullblue'].slice(1, 10),
-
-            'shapeTypes' : [
-                harmonicShapeMap['d'],
-                harmonicShapeMap['s'],
-                harmonicShapeMap['s'],
-                harmonicShapeMap['t'],
-                harmonicShapeMap['r'],
-                harmonicShapeMap['f'],
-                harmonicShapeMap['s'],
-                harmonicShapeMap['l'],
-                harmonicShapeMap['t'],
-            ]
         },
 
         10: {
             'colors': ColorMap['fullblue'],
-
-            'shapeTypes' : [
-                harmonicShapeMap['d'],
-                harmonicShapeMap['s'],
-                harmonicShapeMap['s'],
-                harmonicShapeMap['t'],
-                harmonicShapeMap['r'],
-                harmonicShapeMap['f'],
-                harmonicShapeMap['s'],
-                harmonicShapeMap['l'],
-                harmonicShapeMap['t'],
-                harmonicShapeMap['d'],
-            ]
         }
     }
 
@@ -296,7 +271,7 @@ var Scheduler4 = function(startTime) {
                 size,
                 null,
                 majorColor,
-                shapeTypes[i]
+                harmonicShapeMap[i]
             )
 
             var flyingNote = new FlyingNote(
@@ -354,7 +329,6 @@ var Scheduler4 = function(startTime) {
             minH = -3500;
 
         var colors = this.flyingNotesSettings[flyingNoteNum]['colors'];
-        var shapeTypes = this.flyingNotesSettings[flyingNoteNum]['shapeTypes'];
 
         this.flyingNoteList[fnListInd] = [];
 
@@ -384,7 +358,7 @@ var Scheduler4 = function(startTime) {
                 size,
                 null,
                 majorColor,
-                shapeTypes[i],
+                harmonicShapeMap[i],
                 wireWidth
             )
 
@@ -431,7 +405,6 @@ var Scheduler4 = function(startTime) {
             minH = -3500;
 
         var colors = this.flyingNotesSettings[flyingNoteNum]['colors'];
-        var shapeTypes = this.flyingNotesSettings[flyingNoteNum]['shapeTypes'];
 
         this.flyingNoteList[fnListInd] = [];
 
@@ -464,7 +437,7 @@ var Scheduler4 = function(startTime) {
                 size,
                 null,
                 majorColor,
-                shapeTypes[i],
+                harmonicShapeMap[i],
                 wireWidth
             )
 
@@ -514,7 +487,6 @@ var Scheduler4 = function(startTime) {
             minH = -3500;
 
         var colors = this.flyingNotesSettings[flyingNoteNum]['colors'];
-        var shapeTypes = this.flyingNotesSettings[flyingNoteNum]['shapeTypes'];
 
         this.flyingNoteList[fnListInd] = [];
 
@@ -545,7 +517,7 @@ var Scheduler4 = function(startTime) {
                 size,
                 null,
                 majorColor,
-                shapeTypes[i],
+                harmonicShapeMap[i],
                 wireWidth
             )
 

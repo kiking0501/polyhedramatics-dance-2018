@@ -32,7 +32,10 @@ var Scheduler1 = function(startTime) {
             majorColor = 'pink';
 
         var musicClock = new MusicClock(
-            center_pos, radius, startAngle, majorColor
+            center_pos, radius, startAngle, majorColor,
+            {
+                textColor: 'crimson',
+            }
         );
         musicClock.name = 'musicClock';
         SCENE.add(musicClock);
