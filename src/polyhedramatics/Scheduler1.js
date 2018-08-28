@@ -32,7 +32,10 @@ var Scheduler1 = function(startTime) {
             majorColor = 'pink';
 
         var musicClock = new MusicClock(
-            center_pos, radius, startAngle, majorColor
+            center_pos, radius, startAngle, majorColor,
+            {
+                textColor: 'crimson',
+            }
         );
         musicClock.name = 'musicClock';
         SCENE.add(musicClock);
@@ -40,10 +43,12 @@ var Scheduler1 = function(startTime) {
 
     this.musicClockPulse = function () {
 
-        var chords = [['d', 'm', 's', 'd'],
-                      ['l'],
+        var chords = [['l'],
                       ['r', 's'],
-                      ['t', 's']
+                      ['s', 'd'],
+                      ['f'],
+                      ['f', 'l'],
+                      ['d', 'r'],
                      ];
         var musicClock = SCENE.getObjectByName('musicClock');
 

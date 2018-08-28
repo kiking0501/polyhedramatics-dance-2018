@@ -31,7 +31,7 @@ var Scheduler3 = function(startTime) {
         this.START,
         this.START + 1.2,
         this.START + 9,
-        this.START + 9, //initMusicClock
+        this.START + 9, //initMusicClock, 45sec
         this.START + 9, // showSoundWave
         this.START + 9, // pulseMusicClock
         this.MID - 1,
@@ -64,7 +64,7 @@ var Scheduler3 = function(startTime) {
         )
     }
 
-    this._drawThatMelody = function(size, color, pos, name, sepr, layer, withEdge,
+    this._drawThatMelody = function(size, color, pos, name, sepr, layer, visEdge,
                                     melody) {
 
         this.MNF.resetConfig(
@@ -83,7 +83,7 @@ var Scheduler3 = function(startTime) {
             melody,
             [0, 0, 0],
             null,
-            withEdge
+            visEdge,
         )
         melodyNotes = this.MNF.setMelodyNotesPosition(melodyNotes, pos)
         melodyNotes.name = name;
@@ -96,7 +96,7 @@ var Scheduler3 = function(startTime) {
     this.drawMelody = function() {
 
         var melodyNotes = this._drawThatMelody(
-            1, 'darkgreen', [-1000, -350, 0], 'melodyNotes'
+            1, 'darkgreen', [-1000, -350, 0], 'melodyNotes',
         )
 
         SCENE.add(melodyNotes);
@@ -108,7 +108,13 @@ var Scheduler3 = function(startTime) {
                 {
                     delay: .1,
                     z: 2000,
-                    ease: Power4.easeOut
+                    ease: Power4.easeOut,
+                    onComplete: function(ind){
+                        if (typeof melodyNotes.melody[ind].edge != 'undefined') {
+                            melodyNotes.melody[ind].edge.visible = true;
+                        }
+                    },
+                    onCompleteParams: [i],
                 }
             )
         }
@@ -172,7 +178,7 @@ var Scheduler3 = function(startTime) {
         pulseT.play();
     }
     this.initMusicClock = function(){
-
+        // play at 45 sec
         var center_pos = [0, 0, 0],
             radius = 1000,
             startAngle = Math.PI/2,
@@ -184,6 +190,7 @@ var Scheduler3 = function(startTime) {
         }
         var customSettings = {
             nodeColors: initNodeColors,
+            textColor: 'crimson',
         }
         var musicClock = new MusicClock(
             center_pos, radius, startAngle, majorColor,
@@ -209,8 +216,9 @@ var Scheduler3 = function(startTime) {
         var chords = [['l'],
                       ['r', 's'],
                       ['s', 'd'],
-                      ['d'],
-                      ['t', 's']
+                      ['f'],
+                      ['f', 'l'],
+                      ['d', 'r'],
                      ];
 
         // pulse
@@ -241,6 +249,7 @@ var Scheduler3 = function(startTime) {
         }
         var customSettings = {
             nodeColors: initNodeColors,
+            textColor: 'darkblue',
         }
         var scaleClock = new MusicClock(
             center_pos, radius, startAngle, majorColor,
@@ -328,7 +337,7 @@ var Scheduler3 = function(startTime) {
             layer = 10;
 
         var melodyNotes = this._drawThatMelody(
-            size, 'blue', [-1200, -600, 200], 'melodyNotesAgain', sepr, layer
+            size, 'blue', [-1200, -600, 200], 'melodyNotesAgain', sepr, layer,
         )
         SCENE.add(melodyNotes);
 
@@ -345,7 +354,13 @@ var Scheduler3 = function(startTime) {
                 {
                     delay: .1,
                     z: 2000,
-                    ease: Power4.easeOut
+                    ease: Power4.easeOut,
+                    onComplete: function(ind){
+                        if (typeof melodyNotes.melody[ind].edge != 'undefined') {
+                            melodyNotes.melody[ind].edge.visible = true;
+                        }
+                    },
+                    onCompleteParams: [i],
                 }
             )
         }
@@ -370,7 +385,7 @@ var Scheduler3 = function(startTime) {
             layer = 10;
 
         var melodyNotes = this._drawThatMelody(
-            size, 'purple', [450, 400, 200], 'melodyNotesAgain2', sepr, layer
+            size, 'purple', [450, 400, 200], 'melodyNotesAgain2', sepr, layer,
         )
 
         SCENE.add(melodyNotes);
@@ -389,7 +404,13 @@ var Scheduler3 = function(startTime) {
                 {
                     delay: .1,
                     z: 2000,
-                    ease: Power4.easeOut
+                    ease: Power4.easeOut,
+                    onComplete: function(ind){
+                        if (typeof melodyNotes.melody[ind].edge != 'undefined') {
+                            melodyNotes.melody[ind].edge.visible = true;
+                        }
+                    },
+                    onCompleteParams: [i],
                 }
             )
         }
@@ -424,7 +445,7 @@ var Scheduler3 = function(startTime) {
             layer = 10;
 
         var melodyNotes = this._drawThatMelody(
-            size, 'marine', startPos, 'melodyNotesAgain3', sepr, layer
+            size, 'marine', startPos, 'melodyNotesAgain3', sepr, layer,
         )
 
         SCENE.add(melodyNotes);
@@ -445,23 +466,17 @@ var Scheduler3 = function(startTime) {
                     delay: delayList[i],
                     z: 2000,
                     ease: Power4.easeOut,
+                    onComplete: function(ind){
+                        if (typeof melodyNotes.melody[ind].edge != 'undefined') {
+                            melodyNotes.melody[ind].edge.visible = true;
+                        }
+                    },
+                    onCompleteParams: [i],
                 }
             )
         }
 
         t.play();
-        for (var i = 0; i < melodyNotes.melody.length; i++){
-            TweenLite.to(
-                melodyNotes.melody[i].position, 1.0,
-                {
-                    delay: (.2 + .1)*5 + .4*i,
-                    z: 10,
-                    ease: Linear.easeNone,
-                    onUpdate: i == melodyNotes.melody.length-1? updateCamera: function(){},
-                }
-            )
-        }
-
     }
 
     this.killSoFar = function() {
@@ -525,6 +540,12 @@ var Scheduler3 = function(startTime) {
                     delay: sumDelay[i],
                     z: 1500,
                     ease: Power4.easeOut,
+                    // onComplete: function(ind){
+                    //     if (typeof slowMelody.melody[ind].edge != 'undefined') {
+                    //         slowMelody.melody[ind].edge.visible = true;
+                    //     }
+                    // },
+                    // onCompleteParams: [i],
                 }
             )
         }
@@ -542,6 +563,12 @@ var Scheduler3 = function(startTime) {
                     delay: sumDelay[i],
                     z: -8000,
                     ease: Power4.easeOut,
+                    // onComplete: function(ind){
+                    //     if (typeof slowMelody2.melody[ind].edge != 'undefined') {
+                    //         slowMelody2.melody[ind].edge.visible = true;
+                    //     }
+                    // },
+                    // onCompleteParams: [i],
                 }
             )
         }

@@ -300,11 +300,15 @@ WoodBlock.prototype.polyRotateDuration = function(rotation, duration) {
 
 // naive mapping
 var harmonicShapeMap = {
-    'd': 'tetrahedron', //1, 2, 4, 8, 16
-    'r': 'dodecahedron', // 9
-    'm': 'octahedron', // 5, 10
-    'f': 'icosahedron1',
-    's': 'cube', //3, 6, 12
-    'l': 'icosahedron',
-    't': 'icosahedron1' // 15
+    1: 'cube',
+    2: 'cube',
+    3: 'tetrahedron',
+    4: 'cube',
+    5: 'dodecahedron',
+    6: 'tetrahedron',
+    7: 'icosahedron',
+    8: 'cube',
+    9: 'octahedron',
+    10: 'dodecahedron',
+    11: 'icosahedron1'
 }

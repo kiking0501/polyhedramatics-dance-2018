@@ -19,7 +19,9 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
             'edgeColor': setdefault(this.customSettings['shineEdgeColor'],
                                     ColorMap[majorColor][0]),
             'edgeWidth': 10,
-        }
+        },
+        'textColor': setdefault(this.customSettings['textColor'],
+                                ColorMap[majorColor][0])
     }
 
     this.noteMap = {
@@ -183,25 +185,26 @@ MusicClock.prototype.createNode = function(pos, color, r, isImptNode, isTonic, i
 
     var that = this;
     this.textLoader.load(
-        '../fonts/gentilis_regular.typeface.json', function(font) {
+        '../fonts/gentilis_bold.typeface.json', function(font) {
             var textGeom = new THREE.TextGeometry(
                 setdefault(that.reverseNoteMap[ind], ''),
                 {
                     font: font,
-                    size: 50,
-                    height: 1,
+                    size: r*.8,
+                    height: .01,
                 }
             )
 
             var mesh = new THREE.Mesh(
                 textGeom,
-                new THREE.MeshPhongMaterial({
-                     color: new THREE.Color("grey"),
+                new THREE.MeshBasicMaterial({
+                     color: new THREE.Color(that.settings['textColor']),
                      side: THREE.DoubleSide,
                 })
             )
-            mesh.position.set(pos[0], pos[1], pos[2] - 10);
+            mesh.position.set(pos[0]-r/2.0, pos[1]-r/2.0, pos[2]);
             mesh.rotation.set(0, 0, 0);
+            mesh.scale.set(1, 1, 1);
             noteGroup.text = mesh;
             noteGroup.add(mesh);
         }
@@ -264,6 +267,11 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay, 
     var that = this;
     function keepShineColor() {
         that.nodes[node_ind].circle.material.color = new THREE.Color(shineColor);
+        that.nodes[node_ind].text.scale.set(
+            that.nodes[node_ind].circle.scale.x,
+            that.nodes[node_ind].circle.scale.y,
+            that.nodes[node_ind].circle.scale.z,
+        )
     }
     function keepDimColor() {
         that.nodes[node_ind].circle.material.color = new THREE.Color(dimColor);
