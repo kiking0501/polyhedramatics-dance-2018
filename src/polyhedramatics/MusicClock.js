@@ -181,6 +181,32 @@ MusicClock.prototype.createNode = function(pos, color, r, isImptNode, isTonic, i
     noteGroup.circle = circle;
     noteGroup.add(circle);
 
+    var that = this;
+    this.textLoader.load(
+        '../fonts/gentilis_regular.typeface.json', function(font) {
+            var textGeom = new THREE.TextGeometry(
+                setdefault(that.reverseNoteMap[ind], ''),
+                {
+                    font: font,
+                    size: 50,
+                    height: 1,
+                }
+            )
+
+            var mesh = new THREE.Mesh(
+                textGeom,
+                new THREE.MeshPhongMaterial({
+                     color: new THREE.Color("grey"),
+                     side: THREE.DoubleSide,
+                })
+            )
+            mesh.position.set(pos[0], pos[1], pos[2] - 10);
+            mesh.rotation.set(0, 0, 0);
+            noteGroup.text = mesh;
+            noteGroup.add(mesh);
+        }
+    )
+
     return noteGroup;
 
     // old circle geometry
@@ -246,14 +272,14 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay, 
 
     t.set(this.nodes[node_ind].circle.material,
           {color: new THREE.Color(shineColor)})
-     .to(this.nodes[node_ind].scale, timeLapse,
+     .to(this.nodes[node_ind].circle.scale, timeLapse,
         {
             delay: beforeDelay, x: scale, y: scale, z: scale,
             onUpdate: keepShineColor,
         })
      // .set(this.nodes[node_ind].material,
      //      {color: new THREE.Color(shineColor)})
-     .to(this.nodes[node_ind].scale, timeLapse,
+     .to(this.nodes[node_ind].circle.scale, timeLapse,
         {
             x: 1, y: 1, z: 1,
             onUpdate: keepShineColor,
