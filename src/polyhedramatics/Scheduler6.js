@@ -14,7 +14,7 @@ var Scheduler6 = function(startTime) {
         'againMeteors',
         'againShootMeteors',
         'hideSoundWave',
-        'formClusterWaves',
+        // 'formClusterWaves',
         'cameraWreck',
         'blackOut',
         'cleanEverything',
@@ -28,7 +28,7 @@ var Scheduler6 = function(startTime) {
         this.START + 13.0, //meteors again
         this.START + 13.0, //shoot again
         this.START + 26.0, // hide SoundWave
-        this.START + 26.0, // formClusterWaves
+        // this.START + 26.0, // formClusterWaves
         this.START + 26.0, //camera wreck 44 + 10sec
         this.START + 70, // blackout for 11 sec
         this.START + 75,
@@ -108,68 +108,69 @@ var Scheduler6 = function(startTime) {
         ]
     }
 
-    // //Harmonic Series, do not use music Clock to present
-    // this.backgroundClock = function(){
-    //     var center_pos = [0, 0, 2000],
-    //         radius = 600,
-    //         startAngle = Math.PI/2,
-    //         majorColor = 'yellow3';
+    //Unused
+    //Harmonic Series, do not use music Clock to present!!
+    this.backgroundClock = function(){
+        var center_pos = [0, 0, 2000],
+            radius = 600,
+            startAngle = Math.PI/2,
+            majorColor = 'yellow3';
 
-    //     var backgroundClock = new MusicClock(
-    //         center_pos, radius, startAngle, majorColor,
-    //         {
-    //             'dimEdgeColor': "black",
-    //             'shineNodeColor': 'lightblue',
-    //             'shineEdgeColor': 'black',
-    //             'dimNodeRadius': radius / 50,
-    //             'nodeColors': ["darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray",
-    //                             "darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray",]
-    //         }
-    //     );
-    //     backgroundClock.position.set(center_pos[0], center_pos[1], center_pos[2])
-    //     backgroundClock.name = 'backgroundClock';
-    //     SCENE.add(backgroundClock);
+        var backgroundClock = new MusicClock(
+            center_pos, radius, startAngle, majorColor,
+            {
+                'dimEdgeColor': "black",
+                'shineNodeColor': 'lightblue',
+                'shineEdgeColor': 'black',
+                'dimNodeRadius': radius / 50,
+                'nodeColors': ["darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray",
+                                "darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray", "darkslategray",]
+            }
+        );
+        backgroundClock.position.set(center_pos[0], center_pos[1], center_pos[2])
+        backgroundClock.name = 'backgroundClock';
+        SCENE.add(backgroundClock);
 
 
-    //     var bpm = this.meteorSettings['bpm'];
-    //     var delayTime = this.meteorSettings['delayTime'];
-    //     var notes = this.meteorSettings['notes'];
+        var bpm = this.meteorSettings['bpm'];
+        var delayTime = this.meteorSettings['delayTime'];
+        var notes = this.meteorSettings['notes'];
 
-    //     var sumTime = this.meteorSettings['startShootingTime'];
-    //     for (var i = 0; i < notes.length; i++){
+        var sumTime = this.meteorSettings['startShootingTime'];
+        for (var i = 0; i < notes.length; i++){
 
-    //         sumTime += delayTime[i] * bpm;
+            sumTime += delayTime[i] * bpm;
 
-    //         var chord = [
-    //                         [notes[i], notes[i]]
-    //                     ];
+            var chord = [
+                            [notes[i], notes[i]]
+                        ];
 
-    //         TweenLite.delayedCall(
-    //             sumTime,
-    //             backgroundClock.pulse,
-    //             [chord, 3 * (1 + 2 / (i+1)), 1, 0, 3],
-    //             backgroundClock,
-    //         )
-    //     }
+            TweenLite.delayedCall(
+                sumTime,
+                backgroundClock.pulse,
+                [chord, 3 * (1 + 2 / (i+1)), 1, 0, 3],
+                backgroundClock,
+            )
+        }
 
-    //     sumTime = this.meteorSettings['startShootingTime'] + 13.0;
-    //     for (var i = 0; i < notes.length; i++){
+        sumTime = this.meteorSettings['startShootingTime'] + 13.0;
+        for (var i = 0; i < notes.length; i++){
 
-    //         sumTime += delayTime[i] * bpm;
+            sumTime += delayTime[i] * bpm;
 
-    //         var chord = [
-    //                         [notes[i], notes[i]]
-    //                     ];
+            var chord = [
+                            [notes[i], notes[i]]
+                        ];
 
-    //         TweenLite.delayedCall(
-    //             sumTime,
-    //             backgroundClock.pulse,
-    //             [chord, 3, 1, 0, 3],
-    //             backgroundClock,
-    //         )
-    //     }
+            TweenLite.delayedCall(
+                sumTime,
+                backgroundClock.pulse,
+                [chord, 3, 1, 0, 3],
+                backgroundClock,
+            )
+        }
 
-    // }
+    }
 
     this._initMeteors = function(name, delta, startShootingTime){
 
@@ -308,6 +309,9 @@ var Scheduler6 = function(startTime) {
         )
 
     }
+
+    //Unused
+    // cause an overload to web render :(
     this.formClusterWaves = function(){
         // from 226
 
@@ -317,7 +321,7 @@ var Scheduler6 = function(startTime) {
             startAngle = Math.PI/2;
 
         var vertices = calPolygonVertices(
-            12, r, startAngle, false
+            12, r*5, startAngle, false
         );
         for (var i = 0; i < vertices.length; i++) {
             vertices[i] = [
@@ -345,11 +349,11 @@ var Scheduler6 = function(startTime) {
         };
 
         // soundWave settings
-        var xNum = 10,
-            yNum = 10,
-            zNum = 5,
+        var xNum = 5,
+            yNum = 5,
+            zNum = 3,
             majorColor = 'pink',
-            size = 50,
+            size = 20,
             dist = 100;
 
 
@@ -362,12 +366,12 @@ var Scheduler6 = function(startTime) {
                 var color = ColorMap[majorColor][Math.round(i/2) % ColorMap[majorColor].length];
 
                 var clusterWave = new SoundWave(
-                    center_pos, xNum, yNum, zNum, color, dist
+                    center_pos, xNum, yNum, zNum, color, size, dist
                 );
                 clusterWave.name = 'clusterWave' + i + '_' + j;
                 SCENE.add(clusterWave);
-
-                clusterWave.setGeometricMovement(1, 0, 500, 1);
+                console.log(i, j, center_pos)
+                // clusterWave.setGeometricMovement(1, 0, 50, 1);
             }
 
         }
@@ -431,7 +435,6 @@ var Scheduler6 = function(startTime) {
             }
 
         )
-
         var colors = ["darkslategray", "olivedrab", 0xefd1b5];
         var times = [3.0, 6.0, 2.0];
 
@@ -468,7 +471,7 @@ var Scheduler6 = function(startTime) {
         }
 
         // Scheduler6 stuff
-        names.push("backgroundClock");
+        // names.push("backgroundClock");
 
         for (var i = 0; i < this.meteorSettings['notes'].length; i++){
             for (var j = 0; j < this.meteorSettings['center_pos'][i]['num']; j++){
