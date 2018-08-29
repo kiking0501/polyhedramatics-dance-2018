@@ -14,10 +14,7 @@ var Scheduler6 = function(startTime) {
         'againMeteors',
         'againShootMeteors',
         'hideSoundWave',
-<<<<<<< HEAD
         'formClusterWaves',
-=======
->>>>>>> 68b235ec71b45b54bfd6d5932cf015514fd47997
         'cameraWreck',
         'blackOut',
         'cleanEverything',
@@ -31,10 +28,7 @@ var Scheduler6 = function(startTime) {
         this.START + 13.0, //meteors again
         this.START + 13.0, //shoot again
         this.START + 26.0, // hide SoundWave
-<<<<<<< HEAD
         this.START + 26.0, // formClusterWaves
-=======
->>>>>>> 68b235ec71b45b54bfd6d5932cf015514fd47997
         this.START + 26.0, //camera wreck 44 + 10sec
         this.START + 70, // blackout for 11 sec
         this.START + 75,
@@ -133,21 +127,12 @@ var Scheduler6 = function(startTime) {
     //         }
     //     );
     //     backgroundClock.position.set(center_pos[0], center_pos[1], center_pos[2])
-<<<<<<< HEAD
-
     //     backgroundClock.name = 'backgroundClock';
     //     SCENE.add(backgroundClock);
 
-=======
-
-    //     backgroundClock.name = 'backgroundClock';
-    //     SCENE.add(backgroundClock);
->>>>>>> 68b235ec71b45b54bfd6d5932cf015514fd47997
 
     //     var bpm = this.meteorSettings['bpm'];
     //     var delayTime = this.meteorSettings['delayTime'];
-
-<<<<<<< HEAD
     //     var notes = this.meteorSettings['notes'];
 
     //     var sumTime = this.meteorSettings['startShootingTime'];
@@ -155,18 +140,6 @@ var Scheduler6 = function(startTime) {
 
     //         sumTime += delayTime[i] * bpm;
 
-=======
-    //     var bpm = this.meteorSettings['bpm'];
-    //     var delayTime = this.meteorSettings['delayTime'];
-
-    //     var notes = this.meteorSettings['notes'];
-
-    //     var sumTime = this.meteorSettings['startShootingTime'];
-    //     for (var i = 0; i < notes.length; i++){
-
-    //         sumTime += delayTime[i] * bpm;
-
->>>>>>> 68b235ec71b45b54bfd6d5932cf015514fd47997
     //         var chord = [
     //                         [notes[i], notes[i]]
     //                     ];
