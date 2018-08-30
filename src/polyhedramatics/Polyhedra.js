@@ -2,10 +2,12 @@
     A dedicated way to create Polyhedra <3
 */
 
-var Polyhedra = function(center_pos, size, data, faceColors) {
+var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
 
     THREE.Group.apply(this, arguments);
 
+    clippingPlanes = setdefault(clippingPlanes, []);
+    console.log(clippingPlanes);
 
     var vertices = [];
     for (var i = 0; i < data.vertex.length; i++)
@@ -19,7 +21,13 @@ var Polyhedra = function(center_pos, size, data, faceColors) {
     var faceMaterial = new THREE.MeshBasicMaterial(
     {
         color: 0xffffff,
-        vertexColors: THREE.FaceColors
+        vertexColors: THREE.FaceColors,
+        shininess: 100,
+        side: THREE.DoubleSide,
+        clippingPlanes: clippingPlanes,
+        clipShadows: false,
+        // opacity: .5,
+        // transparent: true,
     });
      //, side: THREE.DoubleSide  transparent:true, opacity:0.8 } );
 

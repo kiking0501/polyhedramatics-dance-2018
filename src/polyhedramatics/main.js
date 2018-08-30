@@ -191,8 +191,10 @@ function init() {
 
     ///////////////
     // set RENDERER
-    RENDERER = new THREE.WebGLRenderer({ antialias: true});
+    RENDERER = new THREE.WebGLRenderer({ antialias: true, alpha: true});
     RENDERER.setSize(WIDTH, HEIGHT);
+    RENDERER.localClippingEnabled = true;
+    RENDERER.shadowMap.enabled = true;
 
     ///////////////
     CONTAINER = $('#main');
@@ -217,8 +219,9 @@ function initScene() {
     // var pointLight = new THREE.PointLight(
     //     ColorMap['grey'][0], 0.8
     // );
-
+    // pointLight.castShadow = true;
     // SCENE.add(pointLight);
+
 
     // var ambientLight = new THREE.PointLight(
     //     ColorMap['grey'][0], 0.3
