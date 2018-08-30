@@ -267,11 +267,11 @@ MusicClock.prototype._pulseNode = function(node_ind, timeLapse, t, beforeDelay, 
     var that = this;
     function keepShineColor() {
         that.nodes[node_ind].circle.material.color = new THREE.Color(shineColor);
-        that.nodes[node_ind].text.scale.set(
-            that.nodes[node_ind].circle.scale.x,
-            that.nodes[node_ind].circle.scale.y,
-            that.nodes[node_ind].circle.scale.z,
-        )
+        // that.nodes[node_ind].text.scale.set(
+        //     that.nodes[node_ind].circle.scale.x,
+        //     that.nodes[node_ind].circle.scale.y,
+        //     that.nodes[node_ind].circle.scale.z,
+        // )
     }
     function keepDimColor() {
         that.nodes[node_ind].circle.material.color = new THREE.Color(dimColor);

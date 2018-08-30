@@ -7,14 +7,12 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
     THREE.Group.apply(this, arguments);
 
     clippingPlanes = setdefault(clippingPlanes, []);
-    console.log(clippingPlanes);
-
     var vertices = [];
     for (var i = 0; i < data.vertex.length; i++)
         vertices.push( new THREE.Vector3(
-            data.vertex[i][0] + center_pos[0],
-            data.vertex[i][1] + center_pos[1],
-            data.vertex[i][2] + center_pos[2]).multiplyScalar(size)
+            data.vertex[i][0]*size + center_pos[0],
+            data.vertex[i][1]*size + center_pos[1],
+            data.vertex[i][2]*size + center_pos[2])
         );
     this.vertices = vertices;
 
@@ -22,12 +20,12 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
     {
         color: 0xffffff,
         vertexColors: THREE.FaceColors,
-        shininess: 100,
+        // shininess: 100,
         side: THREE.DoubleSide,
         clippingPlanes: clippingPlanes,
         clipShadows: false,
-        // opacity: .5,
-        // transparent: true,
+        opacity: 1,
+        transparent: true,
     });
      //, side: THREE.DoubleSide  transparent:true, opacity:0.8 } );
 
@@ -37,6 +35,16 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
     var faceIndex = 0;
     for (var faceNum = 0; faceNum < data.face.length; faceNum++)
     {
+
+
+        var color = new THREE.Color(
+            faceColors[data.face[faceNum].length]
+        );
+
+        color.r = color.r + 0.3 * Math.random();
+        color.g = color.g + 0.3 * Math.random();
+        color.b = color.b + 0.3 * Math.random();
+
         for (var i = 0; i < data.face[faceNum].length - 2; i++)
         {
             geometry.faces[faceIndex] = new THREE.Face3(
@@ -44,12 +52,9 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
                 data.face[faceNum][i+1],
                 data.face[faceNum][i+2]
             );
-            geometry.faces[faceIndex].color = new THREE.Color(
-                faceColors[data.face[faceNum].length]
-            );
-            console.log(new THREE.Color(
-                faceColors[data.face[faceNum].length]
-            ))
+
+            geometry.faces[faceIndex].color = color;
+
             faceIndex++;
         }
     }
@@ -61,10 +66,15 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
     this.poly = poly;
     this.add(poly);
 
+    this.position.set(center_pos[0], center_pos[1], center_pos[2])
 }
 
 Polyhedra.prototype = Object.create(THREE.Group.prototype);
 Polyhedra.prototype.constructor = Polyhedra;
+
+Polyhedra.prototype.changeOpacity = function(from, target, duration) {
+    changeMaterialOpacity(this, 'poly', duration, from, target);
+}
 
 Polyhedra.prototype.polyRotateDuration = function(rotation, duration) {
 
@@ -86,40 +96,40 @@ Polyhedra.prototype.polyRotateDuration = function(rotation, duration) {
 
 
 var instruMap = {
-    'flute': {
+    'flute': { //fire earth
         'solidName': 'Cuboctahedron',
         'faceColors': {
             3: 0xD70066,  //crimson
             4: 0xFF9C00,  //creamy yellow
         },
     },
-    'oboe': {
+    'oboe': { // water gold
         'solidName': 'TruncatedCubocahedron',
         'faceColors': {
-            4: 0xF7B400, // light creamy yellow
-            6: 0xF72600, // orange
-            8: 0x7405A4, // purple
+            4: 0x18C5D5,
+            6: 0xC3FA19,
+            8: 'royalblue',
         },
     },
-    'engHorn': {
+    'engHorn': { // wood water
         'solidName': 'Rhombicubocahedron',
         'faceColors': {
             3: 0x2F0EAA, // blue-purple
             4: 0x009E7F, // blue-green
         },
     },
-    'clarinet': {
+    'clarinet': { // earth gold
         'solidName': 'SnubCuboctahedron',
         'faceColors': {
-            3: 0xF73B00, //sharp orange
-            4: 0x8303A3, // purple
+            3: 'darkorange', // 0xF73B00, //sharp orange
+            4: 'palegoldenrod', // 0x8303A3, // purple
         },
     },
-    'bassoon': {
+    'bassoon': { // fire wood
         'solidName': 'Icosidodecahedron',
         'faceColors': {
-            3: 0x0F2AA8,  // dark blue
-            5: 0x009F7B,  // blue-green
+            3: 'crimson',
+            5: 'darkgreen',
         },
     },
     'trumpet': {

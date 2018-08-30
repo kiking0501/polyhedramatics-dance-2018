@@ -27,6 +27,25 @@ var ColorMap = {
     ],
 }
 
+function changeMaterialOpacity(scope, objName, totalTime, from, target) {
+    var that = scope;
+    that[objName].material.opacity = target;
+    that[objName].material.needsUpdate = true;
+    that.alphaValue = target;
+
+    TweenLite.from(
+        that, totalTime,
+        {
+            alphaValue: from,
+            onUpdate: function(){
+                that[objName].material.opacity = that.alphaValue;
+                that[objName].material.needsUpdate = true;
+            }
+        }
+    );
+
+}
+
 
 function changeMaterialColor(scope, objName, totalTime, finalColor, cycle){
     // change color of obj (which is a member of scope)

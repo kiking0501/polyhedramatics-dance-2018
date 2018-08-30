@@ -428,9 +428,9 @@ var Scheduler5 = function(startTime) {
             {
                 y: this.finalY,
                 onUpdate: function(){
-                    var t = Date.now();
-                    var x = Math.cos(scale * t) * dist;
-                    var z = Math.sin(scale * t) * dist;
+                    var dt = Date.now();
+                    var x = Math.cos(scale * dt) * dist;
+                    var z = Math.sin(scale * dt) * dist;
                     spiral.trailLine.advance(
                         pos2v([x, spiral.trailHeadPosition.y, z])
                     );

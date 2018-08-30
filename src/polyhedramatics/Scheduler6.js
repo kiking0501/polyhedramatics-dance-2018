@@ -425,16 +425,6 @@ var Scheduler6 = function(startTime) {
     this.blackOut = function() {
         // from 270 to 281
 
-        SCENE.fogDegree = 0.00;
-
-        TweenLite.to(
-            SCENE, 11,
-            {
-                fogDegree: 0.1,
-
-            }
-
-        )
         var colors = ["darkslategray", "olivedrab", 0xefd1b5];
         var times = [3.0, 6.0, 2.0];
 
@@ -453,7 +443,6 @@ var Scheduler6 = function(startTime) {
                     b: color3.b,
                     onUpdate: function(){
                         SCENE.background = new THREE.Color(SCENE.colorDegree);
-                        SCENE.fog = new THREE.FogExp2( SCENE.colorDegree, SCENE.fogDegree );
                     }
                 }
             )
