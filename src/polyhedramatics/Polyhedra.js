@@ -12,9 +12,9 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
     var vertices = [];
     for (var i = 0; i < data.vertex.length; i++)
         vertices.push( new THREE.Vector3(
-            data.vertex[i][0],
-            data.vertex[i][1],
-            data.vertex[i][2] ).multiplyScalar(size)
+            data.vertex[i][0] + center_pos[0],
+            data.vertex[i][1] + center_pos[1],
+            data.vertex[i][2] + center_pos[2]).multiplyScalar(size)
         );
     this.vertices = vertices;
 
@@ -47,6 +47,9 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
             geometry.faces[faceIndex].color = new THREE.Color(
                 faceColors[data.face[faceNum].length]
             );
+            console.log(new THREE.Color(
+                faceColors[data.face[faceNum].length]
+            ))
             faceIndex++;
         }
     }
@@ -54,6 +57,7 @@ var Polyhedra = function(center_pos, size, data, faceColors, clippingPlanes) {
     geometry.computeFaceNormals();
     geometry.computeVertexNormals();
     var poly = new THREE.Mesh(geometry, faceMaterial);
+
     this.poly = poly;
     this.add(poly);
 
@@ -92,30 +96,30 @@ var instruMap = {
     'oboe': {
         'solidName': 'TruncatedCubocahedron',
         'faceColors': {
-            4: 1,
-            5: 1,
-            6: 1,
+            4: 0xF7B400, // light creamy yellow
+            6: 0xF72600, // orange
+            8: 0x7405A4, // purple
         },
     },
     'engHorn': {
         'solidName': 'Rhombicubocahedron',
         'faceColors': {
-            3: 1,
-            4: 1,
+            3: 0x2F0EAA, // blue-purple
+            4: 0x009E7F, // blue-green
         },
     },
     'clarinet': {
         'solidName': 'SnubCuboctahedron',
         'faceColors': {
-            3: 1,
-            4: 1,
+            3: 0xF73B00, //sharp orange
+            4: 0x8303A3, // purple
         },
     },
     'bassoon': {
         'solidName': 'Icosidodecahedron',
         'faceColors': {
-            3: 1,
-            5: 1,
+            3: 0x0F2AA8,  // dark blue
+            5: 0x009F7B,  // blue-green
         },
     },
     'trumpet': {

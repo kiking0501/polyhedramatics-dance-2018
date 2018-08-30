@@ -31,30 +31,37 @@ var Scheduler7 = function(startTime) {
 
     this.singPolyhedra = function(){
 
-        var center_pos = [0, 0, 0],
+        var center_pos = [-10, 2, 0],
             size = 50,
-            polyType = 'flute';
+            polyTypeList = ['flute', 'oboe', 'engHorn', 'clarinet', 'bassoon'];
 
-        var polyData = POLYHEDRA[instruMap[polyType]['solidName']];
+        for (var i = 0; i < polyTypeList.length; i++) {
 
-        var localPlane = new THREE.Plane(
-            pos2v([0, .8, .2]), 0.8
-        )
+            var polyType = polyTypeList[i];
 
-        var poly = new Polyhedra(center_pos,
-                                 size,
-                                 polyData,
-                                 instruMap[polyType]['faceColors'],
-                                 [localPlane]
-                                )
+            var polyData = POLYHEDRA[instruMap[polyType]['solidName']];
 
-        poly.name = 'poly';
-        poly.castShadow = true;
-        poly.receiveShadow = true;
+            var localPlane = new THREE.Plane(
+                pos2v([0, .8, .2]), 0.8
+            )
 
-        SCENE.add(poly);
+            var poly = new Polyhedra([center_pos[0] + i*5, center_pos[1], center_pos[2]],
+                                     size,
+                                     polyData,
+                                     instruMap[polyType]['faceColors'],
+                                     [localPlane]
+                                    )
 
-        poly.polyRotateDuration([0.01, 0.01, 0.01], 10)
+            poly.name = 'poly' + i;
+            poly.castShadow = true;
+            poly.receiveShadow = true;
+
+            SCENE.add(poly);
+
+            // poly.polyRotateDuration([0.01, 0.01, 0.01], 10)
+
+        }
+
 
 
         var ground = new THREE.Mesh(
