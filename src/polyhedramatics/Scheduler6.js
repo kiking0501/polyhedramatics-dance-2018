@@ -303,7 +303,10 @@ var Scheduler6 = function(startTime) {
             [10, 'black', false],
             soundWave,
         ).call(
-            disposeHierarchy,
+            function(obj) {
+                SCENE.remove(obj);
+                disposeHierarchy(obj);
+            }
             [soundWave],
             this
         )

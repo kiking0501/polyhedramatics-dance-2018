@@ -1,4 +1,4 @@
-/* [281- sec] Quintet Polyhedra World!
+/* [281- 357 sec] Quintet Polyhedra World with Gb Harmonics!
 
 */
 
