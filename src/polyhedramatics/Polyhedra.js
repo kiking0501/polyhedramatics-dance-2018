@@ -135,24 +135,24 @@ var instruMap = {
     'trumpet': {
         'solidName': 'TruncatedIcosidodecahedron',
         'faceColors': {
-            4: 1,
-            5: 1,
-            10: 1,
+            4: 'lawngreen',
+            6: 'pink',
+            10: 'yellow',
         },
     },
     'frenchHorn': {
         'solidName': 'Rhombicosidodecahedron',
         'faceColors': {
-            3: 1,
-            4: 1,
-            5: 1,
+            3: 'violet',
+            4: 'slateblue',
+            5: 'navy',
         },
     },
     'trombone': {
         'solidName': 'SnubIcosidodecahedron',
         'faceColors': {
-            3: 1,
-            5: 1,
+            3: 'royalblue',
+            5: 'teal',
         },
     },
     'violin1': {
