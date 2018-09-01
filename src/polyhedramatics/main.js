@@ -5,7 +5,9 @@ var SCENE,
     CONTROLS,
     TIMELINE = null,
     RESTART = false,
-    PAUSE = false;
+    PAUSE = false,
+    WITH_INTRO = false,
+    INTRO_TIME = 30;
 
 var LISTENER,
     SOUND = null,
@@ -26,6 +28,53 @@ var SCHEDULE_LIST = [
     new Scheduler7(),
 ]
 
+var TOTALSEC = 711;
+
+function initProgressBar(){
+    var session = [
+        ['A', 37.5],
+        ['B', 71],
+        ['C', 120],
+        ['D', 158],
+        ['E', 184],
+        ['F', 281],
+        ['G', 323],
+        ['H', 358],
+        ['I', 433],
+        ['J', 463],
+        ['CUE1', 490],
+        ['CUE2', 581],
+        ['CUE3', 600]
+    ]
+    var total = TOTALSEC;
+
+    var marks = $("#progress_marks");
+    marks.html("");
+
+    for (var i = 0; i < session.length; i++) {
+
+        var progress = Math.round(session[i][1] * 1.0 / total * 100);
+
+        if (i == session.length -1) {
+            marks.append(
+                '<div class="bar-step" style="left: ' + progress + '%">' +
+                '<div class="label-percent">' + session[i][0] + '</div>' +
+                '<div class="label-line"></div>'
+            )
+        } else {
+            marks.append(
+                '<div class="bar-step" style="left: ' + progress + '%">' +
+                '<div class="label-txt">' + session[i][0] + '</div>' +
+                '<div class="label-line"></div>'
+            )
+        }
+    }
+
+    var bar = $("#progress_bar");
+    bar.css("width", "0%");
+
+}
+
 function changeInputStart(ele){
     var inputStart = parseFloat($(ele).val());
     if (SOUND) {
@@ -40,6 +89,32 @@ function changeInputStart(ele){
         playAudio(inputStart);
     };
 }
+
+function playWithIntro() {
+    WITH_INTRO = true;
+
+    var scheduler = new Scheduler0();
+    var t = new TimelineLite();
+
+    for (var i = 0; i < scheduler.introProgram.length; i++) {
+        var name = scheduler.introProgram[i];
+        var startSecond = scheduler.introStartSecond[i];
+        t = t.call(scheduler[name], [], scheduler, startSecond);
+    }
+
+    $("#intro_text").show();
+
+    render();
+    setTimeout(
+        function(){
+
+            playAudio();
+        },
+        INTRO_TIME * 1000
+    )
+}
+
+
 
 function playAudio(inputStart) {
     if (PAUSE) {
@@ -68,6 +143,7 @@ function playAudio(inputStart) {
             SOUND.setVolume( 2.0 );
             polyAnimate(inputStart);
             $("#loading_block").html("");
+            $("#intro_box").hide();
         });
 
     }
@@ -76,6 +152,9 @@ function playAudio(inputStart) {
 
 function polyAnimate(inputStart) {
     inputStart = setdefault(inputStart, parseFloat($('#inputStart').val()));
+    if (!parseFloat($('#inputStart').val())) {
+        $('#inputStart').val(inputStart);
+    }
 
     if (TIMELINE) {
         TIMELINE.clear();
@@ -104,6 +183,9 @@ function polyAnimate(inputStart) {
         200
     );
 
+    WITH_INTRO = false;
+    START = null;
+
     render();
 }
 
@@ -117,7 +199,25 @@ function render(timestamp) {
         if (!START) {START = timestamp};
         var progress = ((timestamp - START) / 1000 + inputStart).toFixed(2);
         if (!PAUSE){
-            $('#timestamp').html(progress);
+            if (! WITH_INTRO) {
+                $('#timestamp').html(progress);
+
+                var bar = $("#progress_bar");
+                bar.css("width", (progress * 1.0 / TOTALSEC * 100) + "%");
+
+                $("#time_lapsed").html(
+                    ('0' + Math.round(progress / 60.0)).slice(-2) + ':' +
+                    ('0' + Math.round(progress) % 60).slice(-2)
+                )
+            } else {
+                var remain_time = INTRO_TIME - Math.round(progress) % 60;
+                if (remain_time < 0){
+                    remain_time = "..."
+                }
+                $("#remain_time").html(
+                    remain_time
+                )
+            }
         }
 
         RENDERER.render(SCENE, CAMERA);
@@ -130,7 +230,7 @@ function render(timestamp) {
         } else {
             $('#timestamp').html("");
             START = null;
-            SOUND.stop();
+            if (SOUND) SOUND.stop();
         }
 
     }
@@ -191,10 +291,8 @@ function init() {
 
     ///////////////
     // set RENDERER
-    RENDERER = new THREE.WebGLRenderer({ antialias: true, alpha: true});
+    RENDERER = new THREE.WebGLRenderer({ antialias: true});
     RENDERER.setSize(WIDTH, HEIGHT);
-    RENDERER.localClippingEnabled = true;
-    RENDERER.shadowMap.enabled = true;
 
     ///////////////
     CONTAINER = $('#main');
@@ -209,7 +307,6 @@ function init() {
     // // CONTROLS.dampingFactor = 0.25;
     CONTROLS.enableZoom = true;
 
-
 }
 
 function initScene() {
@@ -219,9 +316,8 @@ function initScene() {
     // var pointLight = new THREE.PointLight(
     //     ColorMap['grey'][0], 0.8
     // );
-    // pointLight.castShadow = true;
-    // SCENE.add(pointLight);
 
+    // SCENE.add(pointLight);
 
     // var ambientLight = new THREE.PointLight(
     //     ColorMap['grey'][0], 0.3

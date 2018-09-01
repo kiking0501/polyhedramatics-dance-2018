@@ -296,18 +296,18 @@ var Scheduler6 = function(startTime) {
     this.hideSoundWave = function(){
         // from 226
         var soundWave = SCENE.getObjectByName("highPitchSoundWave");
-
         var t = new TimelineLite();
         t.call(
             soundWave.changeParticleColor,
             [10, 'black', false],
             soundWave,
         ).call(
-            function(obj) {
+            function() {
+                var obj = SCENE.getObjectByName("highPitchSoundWave");
                 SCENE.remove(obj);
                 disposeHierarchy(obj);
-            }
-            [soundWave],
+            },
+            [],
             this
         )
 

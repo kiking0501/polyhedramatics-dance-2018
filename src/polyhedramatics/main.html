@@ -4,15 +4,19 @@
         <meta charset=utf-8>
         <title>Polyhedramatics.js app</title>
 
+        <script src="../../lib/jquery-3.3.1.min.js"></script>
+        <script src="../../lib/bootstrap/bootstrap.min.js"></script>
         <script src="../../lib/three.js"></script>
         <script src="../../lib/OrbitControls.js"></script>
-        <script src="../../lib/jquery-3.3.1.min.js"></script>
         <script src="../../lib/TweenMax.min.js"></script>
         <script src="../../lib/THREE.MeshLine.js"></script>
         <!-- <script src="../../js/TimelinesMax.min.js"></script> -->
         <script src="../../lib/stemkoski_polyhedra.js"></script>
 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><!--
+        <link rel="stylesheet" href="../../lib/bootstrap/bootstrap.min.css"> -->
         <link rel="stylesheet" href="main.css">
+
         <script type="text/javascript" src="utils.js"> </script>
         <script type="text/javascript" src="MusicClock.js"> </script>
         <script type="text/javascript" src="WoodBlock.js"> </script>
@@ -30,10 +34,12 @@
         <script type="text/javascript" src="Scheduler3.js"> </script>
         <script type="text/javascript" src="Scheduler2.js"> </script>
         <script type="text/javascript" src="Scheduler1.js"> </script>
+        <script type="text/javascript" src="Scheduler0.js"> </script>
         <script type="text/javascript" src="main.js"> </script>
 
         <script type="text/javascript">
           $( document ).ready(function() {
+            initProgressBar();
             init();
             initScene();
 
@@ -44,23 +50,82 @@
 
     </head>
     <body>
-        <div class="row" >
+        <div class="row" style="display:none">
 
             <button onclick="javascript:clean(); "> Clean </button>
             &nbsp;
             <button onclick="javascript:pause(); "> Pause </button>
             &nbsp;
-            <input id="inputStart" value=345.0 placeholder="345.0"
+            <input id="inputStart" value=0.0 placeholder="0"
                    onchange="javascript:changeInputStart(this);">
             <button onclick="javascript:playAudio();"> Play </button> &nbsp;
+            <button onclick="javascript:playWithIntro();"> PlayIntro </button> &nbsp;
             <span style="color:white">  Time Lapse: <span id="timestamp"> </span>  &nbsp; &nbsp;
                 <span id="loading_block"> Click Play to start the animation. </span>
 
             </span>
             <br>
+            <hr>
         </div>
-        <hr>
-        <div id="main"> </div>
+
+        <div class="row" style="padding: 10px">
+            <div class="col-xs-3">
+                <span style=" float: right; font-size: 30px; color: white;
+                             padding-top: 5px">
+                    <p>
+                    <i>Polyhedramatics - The Dance</i> &nbsp;
+
+                    </p>
+
+                </span>
+            </div>
+
+            <div class="col-xs-6">
+
+                <div class="container">
+                    <div class="row"><br>
+                        <div class="col-xs-12">
+                            <div class="progress">
+                                <div id="progress_marks">
+<!--                                     <div class="bar-step" style="left: 75%">
+                                        <div class="label-txt">Nice long text for test</div>
+                                        <div class="label-percent">75%</div>
+                                        <div class="label-line"></div>
+
+                                    </div> -->
+                                </div>
+                                  <div id="progress_bar" class="progress-bar progress-bar-striped progress-bar-primary active" role="progressbar" style="width: 15%">
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xs-3">
+
+                <span style="float: right; font-size: 20px; color: white;
+                             padding-top: 5px; margin-right: 100px">
+                    Time: <span id="time_lapsed"> 00: 00 </span> / 11:41
+
+                </span>
+            </div>
+        </div>
+        <div id="intro_box" style="min-height: 50px; ">
+            <span style=" font-size: 30px; color: silver;
+                             padding-top: 20px; margin-left: 100px">
+                ... 係音樂入面尋找數學美，係數學入面尋找幾何美，再加一啲天馬行空嘅幻想咁啦
+            </span>
+            <span id="intro_text" style=" float: right; font-size: 28px; color: silver;
+                             padding-top: 5px; margin-right: 100px;
+                             display: none; ">
+
+                ... 等多 <span id="remain_time"> 30 </span> 秒 ...
+            </span>
+
+        </div>
+        <div id="main">  </div>
     </body>
 
 </html>

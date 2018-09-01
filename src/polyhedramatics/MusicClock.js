@@ -74,7 +74,7 @@ var MusicClock = function(center_pos, r, startAngle, majorColor, customSettings)
     }
 
     // create music nodes
-    this.textLoader = new THREE.FontLoader()
+    this.textLoader = new THREE.FontLoader();
 
     this.nodes = [];
     var colors = [];

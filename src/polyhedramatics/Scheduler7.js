@@ -842,7 +842,6 @@ var Scheduler7 = function(startTime) {
                         var obj = SCENE.getObjectByName("harmonic" + i + '_' + j);
                         SCENE.remove(obj);
                         disposeHierarchy(obj);
-                        console.log(i, j)
                     }
                 }
 

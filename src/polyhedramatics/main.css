@@ -3,3 +3,31 @@ body{
   margin: 0;
   overflow: hidden;
 }
+
+.bar-step {
+    position:absolute;
+    margin-top:-20px;
+    z-index:1;
+    font-size:12px;
+}
+
+.label-txt {
+    float: left;
+    color: lightcyan;
+    font-size: 15px;
+}
+
+.label-line {
+    float: right;
+    background: white;
+    height:40px;
+    width:2px;
+    margin-left: 5px;
+}
+
+.label-percent {
+    float: right;
+    color: lightcyan;
+    margin-left: 25px;
+    font-size: 15px;
+}
