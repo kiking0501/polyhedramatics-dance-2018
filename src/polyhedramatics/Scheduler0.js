@@ -1,28 +1,40 @@
-var Scheduler0 = function() {
+/*
+
+  For displaying Intro Page / Ending Page
+
+*/
+
+var Scheduler0 = function(inputStart) {
 
     var that = this;
-    this.START = 0;
+    this.START = setdefault(inputStart, 358);
 
     this.introProgram = [
         'initCamera',
-        'loadIntroText',
+        'createIntroText',
         'simpleAnimation',
         'endIntro',
         'restart',
     ];
 
     this.introStartSecond = [
-        this.START,
-        this.START,
-        this.START,
-        this.START + 29.8,
-        this.START + 29.8,
+        0,
+        0,
+        0 ,
+        29.8,
+        29.8,
     ];
 
     this.program = [
+        'cleanScene',
+        'cityScape',
+        'cleanCityScape',
     ];
 
     this.startSecond = [
+        this.START + 0.3,
+        this.START + 1,
+        this.START + 1.5,
     ];
 
 
@@ -31,84 +43,140 @@ var Scheduler0 = function() {
         CAMERA.lookAt(0, 0, 0);
     }
 
-    this.textSettings = [
-        ['Polyhedramatics - The Dance',
+    this.chiTextSettings = [
+        ['多面體狂想。舞 （我可以為這個世界留下甚麼?）',
          {
-            size: 160,
-            pos: [-1550, 800, 0],
+            size: 80,
+            pos: [-1400, 900, 0],
          }
         ],
-        ['What Could I Leave For The World?',
+    ]
+
+    this.textSettings = [
+        ['- 2018',
+        {
+            size: 80,
+            pos: [1020, 910, 0]
+        }
+        ],
+        ['Polyhedramatics - The Dance  ( What Could I Leave for the World? ) - 2018',
          {
-            size: 100,
-            pos: [-1450, 500, 0],
+            size: 80,
+            pos: [-1900, 700, 0],
+            color: 'white',
+         }
+        ],
+        ['Excerpt',
+         {
+            size: 80,
+            pos: [350, 480, 0],
+            color: 'orange',
          },
         ],
-        ['Excerpt (Up to H)',
-         {
+        [' - Up to letter H of the music',
+
+          {
             size: 50,
-            pos: [850, 510, 0],
+            pos: [750, 490, 0],
+            color: 'orange',
+          }
+        ],
+        ['Animation |  kiking (Ng Yin-ki)',
+         {
+            size: 90,
+            pos: [300, 20, 0],
          },
         ],
-        ['Animation by:  kiking',
+        ['Original Music |  Hippocrates Cheng',
          {
-            size: 60,
-            pos: [850, 300, 0],
-         },
-        ],
-        ['(Original Music by:  Ching Nam Cheng)',
-         {
-            size: 45,
-            pos: [850, 150, 0],
+            size: 65,
+            pos: [400, -150, 0],
          },
         ],
     ]
 
-    this.loadIntroText = function(){
+    this._getText = function(font, settings) {
+
+        var r = settings[1]['size'];
+
+        var textGeom = new THREE.TextGeometry(
+            settings[0],
+            {
+                font: font,
+                size: r,
+                height: .01,
+            }
+        )
+
+        var mesh = new THREE.Mesh(
+            textGeom,
+            new THREE.MeshBasicMaterial({
+                 color: new THREE.Color(setdefault(settings[1]['color'], 'white')),
+                 side: THREE.DoubleSide,
+            })
+        )
+
+        var pos = settings[1]['pos'];
+
+        mesh.position.set(pos[0], pos[1], pos[2]);
+        mesh.rotation.set(0, 0, 0);
+        mesh.scale.set(1, 1, 1);
+
+        return mesh;
+
+    }
+
+    this.createIntroText = function(){
 
         var that = this;
 
-        var textLoader = new THREE.FontLoader()
+        var textGroup = new THREE.Group();
+
+        var textLoader = new THREE.FontLoader();
         textLoader.load(
             '../fonts/gentilis_bold.typeface.json', function(font) {
 
                 var textSettings = that.textSettings;
                 for (var i = 0; i < textSettings.length; i++) {
-
-                    var r = textSettings[i][1]['size'];
-
-                    var textGeom = new THREE.TextGeometry(
-                        textSettings[i][0],
-                        {
-                            font: font,
-                            size: r,
-                            height: .01,
-                        }
-                    )
-
-                    var mesh = new THREE.Mesh(
-                        textGeom,
-                        new THREE.MeshBasicMaterial({
-                             color: new THREE.Color("white"),
-                             side: THREE.DoubleSide,
-                        })
-                    )
-
-                    var pos = textSettings[i][1]['pos'];
-
-                    mesh.position.set(pos[0], pos[1], pos[2]);
-                    mesh.rotation.set(0, 0, 0);
-                    mesh.scale.set(1, 1, 1);
-                    mesh.name = 'introText' + i;
-                    SCENE.add(mesh);
+                    var mesh = that._getText(font, textSettings[i]);
+                    mesh.name = "introText" + i;
+                    textGroup.add(mesh);
 
                 }
             }
         )
 
+        textLoader.load(
+            '../fonts/FKKaikaisho-AriakeStd-W4_Regular_restricted.json', function(font) {
+
+                var textSettings = that.chiTextSettings;
+
+                for (var i = 0; i < textSettings.length; i++) {
+
+                    var mesh = that._getText(font, textSettings[i]);
+                    mesh.name = "introChiText" + i;
+                    textGroup.add(mesh);
+
+                }
+            }
+        )
+        textGroup.name = "textGroup";
+        this.textGroup = textGroup;
+
     }
     this.simpleAnimation = function(){
-        var center_pos = [0, -150, 0];
+
+        var that = this;
+
+        var t = new TimelineLite();
+        t = t.call(
+            function(){
+                SCENE.add(that.textGroup);
+            },
+            [], this
+        )
+
+        var center_pos = [-300, 0, 0];
             size = 400;
 
         var classTypes = ['woodBlock', 'polyhedra'];
@@ -125,7 +193,6 @@ var Scheduler0 = function() {
             'green', 'darkgreen', 'yellow3', 'salmon', 'coral', 'red', 'grey'
         ];
 
-        var t = new TimelineLite();
         for (var i = 0; i < 10; i++) {
             t = t.call(
                 function(i){
@@ -172,16 +239,74 @@ var Scheduler0 = function() {
 
     this.endIntro = function(){
 
-
-        for (var i = 0; i < this.textSettings.length; i++){
-            var obj = SCENE.getObjectByName("introText" + i);
-            SCENE.remove(obj);
-            disposeHierarchy(obj);
-        }
+        var obj = SCENE.getObjectByName("textGroup");
+        SCENE.remove(obj);
+        disposeHierarchy(obj);
 
     }
 
     this.restart = function(){
         clean();
+    }
+
+    this.cleanScene = function(){
+        this.initCamera();
+        SCENE.background = new THREE.Color('black');
+
+    }
+    this.cityScape = function(){
+        var that = this;
+
+        var chiTextSettings = [
+            ['我城藝術展',
+             {
+                size: 300,
+                pos: [-1150, 500, 0],
+             }
+            ]
+        ];
+
+
+        var engTextSettings = [
+            ['The City Art Exhibition',
+             {
+                size: 200,
+                pos: [-1500, 0, 0],
+             }
+            ]
+        ];
+
+
+        var textLoader = new THREE.FontLoader();
+        textLoader.load(
+            '../fonts/gentilis_bold.typeface.json', function(font) {
+
+                var textSettings = engTextSettings;
+                for (var i = 0; i < textSettings.length; i++) {
+                    var mesh = that._getText(font, textSettings[i]);
+                    mesh.name = "introText" + i;
+                    SCENE.add(mesh);
+
+                }
+            }
+        )
+
+        textLoader.load(
+            '../fonts/FKKaikaisho-AriakeStd-W4_Regular_restricted.json', function(font) {
+
+                var textSettings = chiTextSettings;
+
+                for (var i = 0; i < textSettings.length; i++) {
+
+                    var mesh = that._getText(font, textSettings[i]);
+                    mesh.name = "introChiText" + i;
+                    SCENE.add(mesh);
+
+                }
+            }
+        )
+    }
+    this.cleanCityScape = function(){
+        pause()
     }
 }

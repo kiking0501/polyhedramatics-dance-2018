@@ -26,6 +26,7 @@ var SCHEDULE_LIST = [
     new Scheduler5(),
     new Scheduler6(),
     new Scheduler7(),
+    new Scheduler0(),
 ]
 
 var TOTALSEC = 711;
@@ -144,6 +145,7 @@ function playAudio(inputStart) {
             polyAnimate(inputStart);
             $("#loading_block").html("");
             $("#intro_box").hide();
+            $('#progress_box').show();
         });
 
     }
@@ -206,7 +208,7 @@ function render(timestamp) {
                 bar.css("width", (progress * 1.0 / TOTALSEC * 100) + "%");
 
                 $("#time_lapsed").html(
-                    ('0' + Math.round(progress / 60.0)).slice(-2) + ':' +
+                    ('0' + Math.floor(progress / 60.0)).slice(-2) + ':' +
                     ('0' + Math.round(progress) % 60).slice(-2)
                 )
             } else {
