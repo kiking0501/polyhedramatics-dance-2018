@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>[ kiking] Polyhedramatics - The Dance (The CityArt Exhibition 2018) </title>
+            <meta property = "og:image"
+                content="https://github.com/kiking0501/kiking0501.github.io/blob/master/polyhedramatics_hkapa2018/pic/TheBlueCrystal.png" />
+        <!-- Bootstrap 3-->
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="main.css">
+        <script src="../resource/pdfobject.min.js"> </script>
+        <link rel="icon" type="image/png" href="../resource/favicon.png"/>
+
+        <style type="text/css" media="screen">
+
+
+        </style>
+        <script type="text/javascript" charset="utf-8">
+
+
+            function openTab(tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                $("#" + tabName).css("display", "block");
+
+                if (tabName == "art_details") showSlides(1);
+            }
+
+
+            var slideIndex = 1;
+
+
+            function plusSlides(n) {
+              slideIndex += n;
+              showSlides();
+            }
+
+            function currentSlide(n) {
+              slideIndex = n;
+              showSlides();
+            }
+
+            function showSlides() {
+              var i;
+              var slides = $(".slides");
+              var dots = $(".dot");
+              if (slideIndex > slides.length) {slideIndex = 1}
+              if (slideIndex < 1) {slideIndex = slides.length}
+              for (i = 0; i < slides.length; i++) {
+                  if (i != slideIndex -1)
+                    slides[i].style.display = "none";
+              }
+              for (i = 0; i < dots.length; i++) {
+                if (i % (dots.length / 2) != slideIndex-1)
+                    dots[i].className = dots[i].className.replace(" active", "");
+                else
+                    dots[i].className += " active";
+              }
+              slides[slideIndex-1].style.display = "block";
+            }
+
+            function open_music_score(){
+                toggle_music_score();
+                var w = window.open("", "Music Score by Hippocates CHENG", "width=500px");
+
+                var music_score = $("#music_score").clone();
+                w.document.write(music_score.html());
+                w.document.title = "Music Score";
+            }
+
+            function toggle_music_score(){
+
+                var options = {
+                    pdfOpenParams: {
+                        view: 'FitV',
+                        pagemode: 'thumbs',
+                        search: 'lorem ipsum'
+                    }
+                };
+
+                PDFObject.embed(
+                    "[Hippocrates_Cheng_Ching-nam)_What_could_I_leave_for_the_world__for_orchestra.pdf",
+                    "#music_score",
+                    options
+                )
+                $("#button_toggle_music_score").hide();
+            }
+
+            $( document ).ready(function() {
+
+                $("#artwork").load("artwork.html");
+                $("#art_details").load("art_details.html");
+                $("#render_online").load("render_online.html");
+                $("#music_details").load("music_details.html");
+                $("#button_artwork").click();
+
+
+            })
+        </script>
+    </head>
+
+    <body>
+
+        <div>
+            <h1 class="title"> [kiking] Polyhedramatics - The Dance 多面體狂想。舞 </h1>
+
+            <h4>
+            Featured in <i> The City Art Exhibition </i>, 3 Sep - 30 Sep 2018,  at <i> The Hong Kong Academy for Performing Arts </i>
+            </h4>
+            <div class="tab" style="margin-top:30px">
+              <button id="button_artwork" class="tablinks" onclick="openTab('artwork')">The Artwork</button>
+              <button class="tablinks" onclick="openTab('render_online')">Render it Yourself!</button>
+              <button class="tablinks" onclick="openTab('art_details')"> About the Fusion: Music x Maths x Art </button>
+              <button class="tablinks" onclick="openTab('music_details')">About the Music</button>
+              <button class="tablinks"> <a href="https://github.com/kiking0501/polyhedramatics-dance-2018"> Code Repository</a> </button>
+            </div>
+
+            <div id="artwork" class="tabcontent">
+            </div>
+
+            <div id="art_details" class="tabcontent">
+            </div>
+
+            <div id="render_online" class="tabcontent">
+            </div>
+
+            <div id="music_details" class="tabcontent">
+            </div>
+
+
+    </body>
+</html>
