@@ -18,12 +18,16 @@ The final animation, however, goes beyond mathematical beauty and becomes much o
 
 <br>
 
-### This repository- The Development Mode
+### This repository
 
+#### Animation
 Making animation is completely exploratory as it is my first time doing so. Finally, I came across the solution **THREE.js** , which is a cross-browser Javascript Library and API used to create and display animated 3D computer graphics in a web- browser. Learning much from the <a href="https://threejs.org/examples" target="_blank"> library's official examples </a>, I was able to ***program*** the unrealistic scenes that flash on my mind while I was reading the music score and listening to the music piece . 
 
 <br>
 
-This repository is all the code that creates the animation. The code was much messy, but the result is fantastic (check <a href="https://kiking0501.github.io/polyhedramatics-dance-2018/" target="_blank">this link</a> and click the "Play" button). My highest gratitude to WebGL!
+This repository is all the code that creates the animation. The code was much messy, but the result is fantastic (check <a href="https://kiking0501.github.io/polyhedramatics-dance-2018/src/polyhedramatics/main.html" target="_blank">this link</a> and click the "Play" button). My highest gratitude to WebGL!
+
+#### Documentaiton
+Check <a href="https://kiking0501.github.io/polyhedramatics-dance-2018/" target="_blank"> this webpage </a> for more details!
 
 
